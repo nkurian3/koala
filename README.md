@@ -12,7 +12,7 @@ TBD
 ### Install Guide:
 1. **Clone repository**: `git clone git@github.com:nkurian3/koala.git`
 2. **Navigate into directory**: `cd koala`
-3. **Create virtual environment**: `python3 -m venv venv`
+3. **Create virtual environment if without one**: `python3 -m venv venv`
 4. **Activate virtual environment**:
   - maxOs/Linux: `. venv/bin/activate`
   - Windows: `venv\Scripts\activate`
