@@ -10,8 +10,8 @@ Developer: Ashley Li
 TBD
 
 ### Install Guide:
-1. **Clone the repository**: `git clone git@github.com:baiwanqian/WheelOfFortune.git`
-2. **Navigate into directory**: `cd WheelOfFortune`
+1. **Clone repository**: `git clone git@github.com:nkurian3/koala.git`
+2. **Navigate into directory**: `cd koala`
 3. **Create virtual environment**: `python3 -m venv venv`
 4. **Activate virtual environment**:
   - maxOs/Linux: `. venv/bin/activate`
