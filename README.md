@@ -1,10 +1,10 @@
 # Koala 
 
 ## Roles/Roster:
-Project Manager: Naomi Kurian
-Developer: Isabel Zheng
-Developer: Veronika Duvanova  
-Developer: Ashley Li
+Project Manager: Naomi Kurian  
+Developer: Isabel Zheng  
+Developer: Veronika Duvanova    
+Developer: Ashley Li  
 
 ## Description of Website:
 TBD
