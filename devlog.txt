@@ -1,0 +1,9 @@
+Naomi Kurian, Isabel Zheng, Veronika Duvanova, Ashley Li
+Koala
+SoftDev
+P02 – Makers Makin' It, Act I
+2026-01-08
+
+naomiK -- 2026-01-08 23:00
+  - added model devlog entry
+  - created basic dd outline for dd (used old template)
