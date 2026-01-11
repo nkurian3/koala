@@ -63,6 +63,25 @@ def homepage():
     if not "user_id" in session:
         return redirect("/login")
     else:
+        '''
+        tableString = ""
+        for i in range(fetch('animals', 'user_id = ?', 'COUNT(*)', (session["user_id"],))[0][0]):
+            if (i%3==0):
+                tableString +="<tr>"
+            story_id = i+1
+            title = fetch("story_base", f"rowid={story_id}", "title")[0][0]
+            author_id = fetch("story_base", f"rowid={story_id}", "author")[0][0]
+            author = fetch("user_base", f"rowid={author_id}", "username")[0][0]
+            tableString+= f"""
+            <td>
+                <a href='/story/{story_id}'>{title}</a>
+                <p>by <a href='/profile/{author_id}'>{author}</a></p>
+            </td>"""
+            if (i%3==2):
+                tableString +="</tr>"
+        if not tableString.strip().endswith("</tr>"):
+            tableString+="</tr>"
+        '''
         return render_template("home.html")
 
 
