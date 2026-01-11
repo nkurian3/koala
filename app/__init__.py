@@ -9,15 +9,21 @@ import random
 from flask import Flask, render_template
 from flask import session, request, redirect
 import os
-import requests
+#import requests
 import time
 
 # Flask
 app = Flask(__name__)
-app.secret_key = "bdzfgetdzhezt"
+app.secret_key = "afsdfhbksadbfh"
 
 # SQLite
 DB_FILE = "data.db"
+
+def get_db():
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+    return conn
 
 db = get_db()
 c = db.cursor()
@@ -28,7 +34,8 @@ c.execute(
     user_id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
     password TEXT,
-    )
+    xp INTEGER,
+    level INTEGER)
     """
 )
 
@@ -109,3 +116,34 @@ def register():
             session["user_id"] = fetch("users", "username = ?", "user_id", (request.form["username"],))[0][0]
             return redirect("/")
     return render_template("register.html")
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    return render_template("profile.html")
+
+@app.route("/wild", methods=["GET", "POST"])
+def wild():
+    return render_template("wild.html")
+
+@app.route("/rewards", methods=["GET", "POST"])
+def rewards():
+    return render_template("rewards.html")
+
+
+
+
+
+
+def fetch(table, criteria, data, params=()):
+    db = get_db()
+    c = db.cursor()
+    query = f"SELECT {data} FROM {table} WHERE {criteria}"
+    c.execute(query, params)
+    data = c.fetchall()
+    db.close()
+    return data
+
+# Flask
+if __name__ == "__main__":
+    app.debug = True
+    app.run()
