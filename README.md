@@ -7,7 +7,7 @@ Developer: Veronika Duvanova
 Developer: Ashley Li  
 
 ## Description of Website:
-TBD
+Our website is a game that allows the user to rescue animals, restore their health, and release them back into the wild. Users can earn food (to restore animals’ health) and money (to buy new enclosures) through trivia questions. The amount of animals a user is currently rehabilitating is dependent on the amount of enclosure space they have, and their history can be found on the profile page.
 
 ### Install Guide:
 1. **Clone repository**: `git clone git@github.com:nkurian3/koala.git`

@@ -19,20 +19,20 @@
   <body>
 
     <!--NAV BAR-->
-    <div class="bg-gray-800">
-      <div class="p-5 flex flex-row justify-end">
-          <form action="{{ url_for('home') }}" method="POST" class="px-2"><input type="submit" value="HOME"
-            class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white"></form>
-          <form action="{{ url_for('profile') }}" method="POST" class="px-2"><input type="submit" value="PROFILE"
-            class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white"></form>
-          <form action="{{ url_for('rewards') }}" method="POST" class="px-2"><input type="submit" value="REWARDS"
-            class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white"></form>
-          <form action="{{ url_for('wild') }}" method="POST" class="px-2"><input type="submit" value="WILD"
-            class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white"></form>
-          <form action="{{ url_for('logout') }}" class="px-2"><input type="submit" value="LOG OUT"
-            class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white"></form>
-       </div>
-    </div>
+    <nav class = "">
+      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
+          <a class="flex items-center" href="/" >
+              <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
+          </a>
+          <div class="p-5 flex flex-row justify-end space-x-4">
+              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/" onclick = "loadingScreen()">Home</a>
+              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile" onclick = "loadingScreen()">Profile</a>
+              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards" onclick = "loadingScreen()">Rewards</a>
+              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild" onclick = "loadingScreen()">Wild</a>
+              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout" onclick = "loadingScreen()">Logout</a>
+          </div>
+      </div>
+    </nav>
 
 
     <h1 class="text-3xl text-center uppercase my-3 font-bold">Wild Page</h1>
