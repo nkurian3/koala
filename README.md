@@ -12,12 +12,11 @@ Our website is a game that allows the user to rescue animals, restore their heal
 ### Install Guide:
 1. **Clone repository**: `git clone git@github.com:nkurian3/koala.git`
 2. **Navigate into directory**: `cd koala`
-3. **Create virtual environment if without one**: `python3 -m venv venv`
+3. **Create virtual environment if without one**: `python3 -m venv env`
 4. **Activate virtual environment**:
-  - maxOs/Linux: `. venv/bin/activate`
-  - Windows: `venv\Scripts\activate`
+  - maxOs/Linux: `. env/bin/activate`
 5. **Install dependencies**: `pip install -r requirements.txt`
 
 ### Launch Codes:
-1. **Navigate into app directory**: `cd app`
-2. **Run**:`python __init__.py`
+1. **Navigate into app**: `cd app`
+2. **Run __init__.py**:`python3 __init__.py`
