@@ -13,3 +13,21 @@ naomiK -- 2026-01-11 20:34
   - added login/register html files
   - added function for each page in python file
   - edited navbar
+
+naomiK -- 2026-01-12 16:11
+INITIAL DD REVIEW
+  Summary of peer review (rev'd by JAMEs and 2yellow2brown):
+    - liked our project description
+    - asked about login/register navbar --> meant back button, revised
+    - confused about trivia page on site map --> meant rewards page, revised
+    - asked for more detail on user history in profile page --> revised
+    - advised prioritizing functionality over js and css details --> noted
+    - asked for FEF specification for homepage layout --> revised
+    - question about route for enclosure --> removed/revised
+    - problems with split sections from printing
+    - problems with visibility of component map --> revised
+    - extra rows for table --> revised
+    - undetermined deadlines --> work in progress
+  - Added revisions to dd and added updated version to repo
+  
+   
