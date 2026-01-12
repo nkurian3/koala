@@ -15,7 +15,7 @@ Our website is a game that allows the user to rescue animals, restore their heal
 3. **Create virtual environment if without one**: `python3 -m venv env`
 4. **Activate virtual environment**:
   - maxOs/Linux: `. env/bin/activate`
-5. **Install dependencies**: `pip install -r requirements.txt`
+5. **Install requirements**: `pip install -r requirements.txt`
 
 ### Launch Codes:
 1. **Navigate into app**: `cd app`
