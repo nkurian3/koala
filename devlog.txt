@@ -7,3 +7,9 @@ P02 – Makers Makin' It, Act I
 naomiK -- 2026-01-08 23:00
   - added model devlog entry
   - created basic dd outline for dd (used old template)
+
+naomiK -- 2026-01-11 20:34
+  - added readme description
+  - added login/register html files
+  - added function for each page in python file
+  - edited navbar
