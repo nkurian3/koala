@@ -5,3 +5,36 @@
   background-color: #555;
   border-radius: 50%;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes moving{
+    from {
+        transform: translateX(70%);
+    }
+    to {
+        transform: translateX(-70%);
+    }
+}
+
+
+
+.moving {
+  animation: moving 5s;
+}
+
