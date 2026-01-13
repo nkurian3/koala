@@ -14,7 +14,7 @@ Our website is a game that allows the user to rescue animals, restore their heal
 2. **Navigate into directory**: `cd koala`
 3. **Create virtual environment if without one**: `python3 -m venv env`
 4. **Activate virtual environment**:
-  - maxOs/Linux: `. env/bin/activate`
+  - maxOs/Linux: `. venv/bin/activate`
 5. **Install requirements**: `pip install -r requirements.txt`
 
 ### Launch Codes:
