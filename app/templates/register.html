@@ -16,69 +16,60 @@ P02 – Makers Makin' It, Act I
 
   </head>
 
-  <body>
-    
+  <body class="bg-[url('../static/test.jpeg')] bg-auto bg-center">
+
     <nav class = "">
       <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
           <a class="flex items-center" href="/" >
               <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
           </a>
           <div class="p-5 flex flex-row justify-end space-x-4">
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/" onclick = "loadingScreen()">Home</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile" onclick = "loadingScreen()">Profile</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards" onclick = "loadingScreen()">Rewards</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild" onclick = "loadingScreen()">Wild</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout" onclick = "loadingScreen()">Logout</a>
+              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/login" onclick = "loadingScreen()">Log In</a>
           </div>
       </div>
     </nav>
-    
 
 
-      <div class="">
-        <div class="row justify-content-center">
-          <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h1 class="text-center mb-4"> Create an Account </h1>
-                <p class="text-muted text-center mb-4">Please enter your username and password below:</p>
 
-                <form method='POST' action="/register">
-                  {% if error %}
-                  <div class="alert alert-danger" role="alert">
-                    {{ error | safe }}
-                  </div>
-                  {% endif %}
 
-                  <div class="mb-3">
-                    <label for="username" class="form-label">USERNAME:</label>
-                    <input type="text" class="form-control" name="username" id="username" required>
-                  </div>
 
-                  <div class="mb-3">
-                    <label for="password" class="form-label">PASSWORD:</label>
-                    <input type="password" class="form-control" name="password" id="password" required>
-                  </div>
+    <div class="mx-[5%] my-[5%] flex flex-col items-left">
+      <div class="w-[500px] my-5 bg-gray-400 flex flex-col items-center rounded-md">
 
-                  <div class="mb-3">
-                    <label for="password" class="form-label">CONFIRM PASSWORD:</label>
-                    <input type="password" class="form-control" name="confirm" id="confirm" required>
-                  </div>
+      <h1 class="text-6xl text-center uppercase mt-5 font-bold">Create Your Account</h1>
+      <p class="text-1xl text-center mb-5">Enter a new username and password below:</p>
 
-                  <div class="d-grid gap-2">
-                    <input type="submit" name="sub1" class="btn btn-primary" value="Register">
-                  </div>
-                </form>
+      <form method='POST' action="/register" class="my-3">
 
-              </div>
-            </div>
-          </div>
+        <div class="m-[20px]">
+          <label for="username" class="form-label p-2 uppercase font-bold text-center bg-gray-500 rounded-lg">USERNAME:</label>
+          <input type="text" class="form-control" name="username" id="username" required>
         </div>
-      </div>
+
+        <div class="m-[20px]">
+          <label for="password" class="form-label p-2 uppercase font-bold text-center bg-gray-500 rounded-lg">PASSWORD:</label>
+          <input type="password" class="form-control" name="password" id="password" required>
+        </div>
+
+        <div class class="m-[20px]">
+          <label for="password" class="form-label p-2 uppercase font-bold text-center bg-gray-500 rounded-lg">CONFIRM PASSWORD:</label>
+          <input type="password" class="form-control" name="confirm" id="confirm" required>
+        </div>
+
+        <div class="m-[40px] d-grid gap-2">
+          <input type="submit" name="sub1" class="font-semibold bg-gray-800 rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 mb-5 px-5" value="Register">
+        </div>
+
+        {% if error %}
+          <div class="p-2 m-2 uppercase font-semibold rounded-lg text-white" role="alert">
+          {{ error | safe }}
+          </div>
+        {% endif %}
+      </form>
+
+    </div>
+  </div>
+
 
   </body>
-
-  <footer>
-  </footer>
-
 </html>
