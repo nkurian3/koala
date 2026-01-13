@@ -29,5 +29,8 @@ INITIAL DD REVIEW
     - extra rows for table --> revised
     - undetermined deadlines --> work in progress
   - Added revisions to dd and added updated version to repo
-  
-   
+
+ashleyL -- 2026-01-13 00:25
+  - created enclosure.html
+  - tested pre-built Tailwind templates
+  - brainstormed ideas on how to modify said template
