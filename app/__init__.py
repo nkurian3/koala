@@ -33,9 +33,7 @@ c.execute(
     CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
-    password TEXT,
-    xp INTEGER,
-    level INTEGER)
+    password TEXT)
     """
 )
 
