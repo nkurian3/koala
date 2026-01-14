@@ -144,7 +144,7 @@ def profile():
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
     anim = []
-    basepath = "static/animals"
+    basepath = "static/animal_animations"
 
     for i in range(random.randint(1, 6)):
         image = random.choice(os.listdir(basepath))
