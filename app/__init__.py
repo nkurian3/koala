@@ -152,7 +152,7 @@ def wild():
         anim += [path]
     print(anim)
 
-    return render_template("wild.html")
+    return render_template("wild.html", anim = anim)
 
 @app.route("/rewards", methods=["GET", "POST"])
 def rewards():
