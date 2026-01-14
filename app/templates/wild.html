@@ -12,9 +12,10 @@
 <html>
   <head>
     <title>WILD</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
+    <script src="/static/js/script.js" defer></script>
     <style>
       body{
         background-image: url('static/test.jpeg');
@@ -44,6 +45,11 @@
 
     <h1 class="text-3xl text-center uppercase my-3 font-bold">Wild Page</h1>
 
+    {% for a in anim %}
+      <button type = "button" class = "animals">
+        <img src = {{a}} alt = "animal" class = "animals absolute">
+      </button>
+    {% endfor %}
 
   </body>
 </html>

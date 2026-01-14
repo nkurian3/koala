@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var animal.getElementById("animal");
 
 function move() {
@@ -14,3 +15,12 @@ function move() {
     }
   }
 }
+=======
+const animals = document.getElementsByClassName("animals");
+
+for (let i = 0; i < animals.length; i++){
+    animals[i]
+    let rX = Math.floor(Math.random() * (window.innerWidth - animals[i].clientWidth));
+    animals[i].style.left = rX + 'px';
+}
+>>>>>>> 2980fdd7459f7687c92e4c771fa9b84da2b6219b
