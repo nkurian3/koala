@@ -11,14 +11,14 @@
 
  <html>
    <head>
-     <title>ENCLOSURE</title>
+     <title>{{n}}'s ENCLOSURE</title>
      <script src="https://cdn.tailwindcss.com/3.4.16"></script>
      <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
      <link rel='stylesheet' href='../static/css/style.css'>
-     <!-- <script src=".../static/js/script.js"></script> -->
+     <script src="/static/js/script2.js" defer></script>
      <style>
       body{
-        background-image: url('static/test.jpeg');
+        background-image: url('static/test2.jpg');
         background-repeat: no-repeat;
         background-size: cover;
         background-attachment: fixed;
@@ -45,40 +45,28 @@
     </nav>
 
 
-     <h1 class="text-3xl text-center uppercase my-3 font-bold">Enclosure Page</h1>
+     <h1 class="text-3xl text-center uppercase my-3 font-bold">{{n}}'s Enclosure</h1>
 
      <!-- ANIMALS -->
 
-      <button popovertarget="myPopover">
-      	<img src="https://tse1.mm.bing.net/th/id/OIP.1QN9rkUC3T3kmbnMfsnBIAHaE8?pid=ImgDet&w=474&h=316&rs=1&o=7&rm=3"
-           	 alt="Button Image" style="width: 100px; height: 100px;">
+      <button popovertarget="myPopover" class = "moving btn" id = "why">
+        
+      	<img src= {{p}} alt="Button Image" class = "animals absolute">
       </button>
 
       <div popover id="myPopover">
-        Hunger:
+        Health:
         <div class="barbase">
-        <div id="myBar" class="bar" style="width:20%">20%</div>
+        <div id="myBar" class="bar" style="{{ strR }}" > {{r}}</div>
         </div>
         <br>
-        <button class="feedBut" onclick="move()">Feed</button>
+        <button id = "feed"  data-r = '{{rInt}}' >Feed</button>
 
-        <script>
-        function move() {
-          var elem = document.getElementById("myBar");
-          var width = 20;
-          var id = setInterval(frame, 10);
-          function frame() {
-            if (width >= 100) {
-              clearInterval(id);
-            } else {
-              width++;
-              elem.style.width = width + '%';
-              elem.innerHTML = width * 1  + '%';
-            }
-          }
-        }
-        </script>
+        
 
       </div>
+
+
+      
    </body>
  </html>

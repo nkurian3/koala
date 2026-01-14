@@ -39,3 +39,9 @@ isabelZ -- 2026-01-14 3:15
   - started the rewards & connected to the trivia 
   - tested & fixed errors for trivia database and selection 
   - trivia api pulls trouble loading questions (needs to fix) 
+
+naomiK -- 2026-01-14 5:34
+  - implemented wild
+  - implemented enclosure
+  - implemented feeeding progress
+  - worked on home

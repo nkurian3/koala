@@ -6,7 +6,7 @@
 
 import sqlite3
 import random
-from flask import Flask, render_template
+from flask import Flask, url_for, render_template
 from flask import session, request, redirect
 import os
 #import requests
@@ -39,7 +39,9 @@ c.execute(
     username TEXT UNIQUE,
     password TEXT,
     enclosures INTEGER,
-    animals INTEGER)
+    animals INTEGER,
+    money INTEGER,
+    food INTEGER)
     """
 )
 
@@ -50,7 +52,7 @@ c.execute(
     user_id INTEGER,
     last_fed INTEGER,
     species TEXT,
-    health TEXT,
+    health INTEGER,
     name TEXT,
     FOREIGN KEY(user_id) REFERENCES users(user_id))
     """
@@ -67,26 +69,23 @@ def homepage():
     if not "user_id" in session:
         return redirect("/login")
     else:
-        '''
+        
         tableString = ""
-        for i in range(fetch('animals', 'user_id = ?', 'COUNT(*)', (session["user_id"],))[0][0]):
+        for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
             if (i%3==0):
-                tableString +="<tr>"
-            story_id = i+1
-            title = fetch("story_base", f"rowid={story_id}", "title")[0][0]
-            author_id = fetch("story_base", f"rowid={story_id}", "author")[0][0]
-            author = fetch("user_base", f"rowid={author_id}", "username")[0][0]
+                tableString +="<tr class= 'flex justify-between'>"
+            
             tableString+= f"""
             <td>
-                <a href='/story/{story_id}'>{title}</a>
-                <p>by <a href='/profile/{author_id}'>{author}</a></p>
+                <img src="static/test2.jpg" alt="enclosure">
             </td>"""
             if (i%3==2):
                 tableString +="</tr>"
         if not tableString.strip().endswith("</tr>"):
             tableString+="</tr>"
-        '''
-        return render_template("home.html")
+        
+
+        return render_template("home.html", table = tableString)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -127,12 +126,14 @@ def register():
             c.execute("SELECT COUNT(*) FROM users")
             u_id = c.fetchall()[0][0]
             c.execute(
-                "INSERT INTO users VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (
                     u_id,
                     request.form["username"],
                     request.form["password"],
-                    2,
+                    3,
+                    0,
+                    0,
                     0
                 )
             )
@@ -178,26 +179,47 @@ def wild():
 
     if request.method == "POST":
         if request.form.get("action") == "rescue":
+            r = random.randint(2,7)
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
             c.execute('''UPDATE users 
             SET animals = animals + 1
             WHERE user_id = ?
             ''', (session["user_id"],))
-
             print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
             c.execute('''
             INSERT INTO animals (user_id, last_fed, species, health, name)
             VALUES (?, ?, ?, ?, ?)
-            ''', (session["user_id"], 0, request.form["species"], request.form["health"], request.form["name"],))
+            ''', (session["user_id"], 0, request.form.get("species"), r, request.form.get("name"),))
 
             db.commit()
             db.close()
-        return redirect('/enclosure')
+
+
+            ray = str(r)
+            basepath = "static/animal_animations"
+            image = request.form.get("species") + "_" + request.form.get("health") + ".gif"
+            path = os.path.join(basepath, image)
+        return redirect(url_for('enclosure', animal_path = path, rand = ray, name = request.form.get("name")))
             
 
 
     return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
+
+
+
+
+@app.route("/enclosure", methods=["GET", "POST"])
+def enclosure():
+    animal_path = request.args.get("animal_path", "")
+    ra = int(request.args.get("rand", '5'))
+    n = request.args.get("name", "")
+    rad = str(ra * 10) + "%"
+    strR = "width:" + rad
+    return render_template("enclosure.html", p = animal_path, r = rad, strR = strR, rInt = ra * 10, n = n)
+
+
+
 
 def getTrivia():
     url = "https://opentdb.com/api.php?amount=1&type=multiple"
@@ -215,7 +237,6 @@ def getTrivia():
 @app.route("/rewards", methods=["GET", "POST"])
 
 def rewards():
-<<<<<<< HEAD
     if "user_id" not in session: 
         return redirect ("/login")
     response = ""
@@ -244,13 +265,6 @@ def rewards():
         session ["correct_answer"] = trivia["correct"]
     db.close()
     return render_template("rewards.html", question = trivia["question"], answers = trivia["answers"], response = response, money = money)
-
-
-
-
-@app.route("/enclosure", methods=["GET", "POST"])
-def enclosure():
-    return render_template("enclosure.html")
 
 
 
