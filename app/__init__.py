@@ -38,7 +38,8 @@ c.execute(
     user_id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
     password TEXT,
-    enclosures INTEGER)
+    enclosures INTEGER,
+    animals INTEGER)
     """
 )
 
@@ -127,11 +128,12 @@ def register():
             c.execute("SELECT COUNT(*) FROM users")
             u_id = c.fetchall()[0][0]
             c.execute(
-                "INSERT INTO users VALUES (?, ?, ?, ?)",
+                "INSERT INTO users VALUES (?, ?, ?, ?, ?)",
                 (
                     u_id,
                     request.form["username"],
                     request.form["password"],
+                    2,
                     0
                 )
             )
@@ -148,15 +150,37 @@ def profile():
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
     anim = []
-    basepath = "static/animals"
+    names = ["Bob", "Henry", "Sally", "Chris", "Patricia", "Julia"]
+    healths = []
+    species = []
 
-    for i in range(random.randint(1, 6)):
+    basepath = "static/animal_animations"
+    r = random.randint(1, 6)
+
+
+    for i in range(r):
         image = random.choice(os.listdir(basepath))
+        if image == ".DS_Store":
+            image = "bear_idle.gif"
         path = os.path.join(basepath, image)
         anim += [path]
-    print(anim)
+        
+        ima = image[:-4]
+        arr = ima.split("_")
+        print(arr)
+        healths += [arr[1]]
+        species += [arr[0]]
 
-    return render_template("wild.html", anim = anim)
+
+    currAns = fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0]
+    currEns = fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]
+    space = currEns > currAns
+
+
+
+
+
+    return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
 
 def getTrivia():
     url = "https://opentdb.com/api.php?amount=1&type=multiple"
