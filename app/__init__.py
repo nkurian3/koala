@@ -70,6 +70,9 @@ def homepage():
         return redirect("/login")
     else:
         
+        ans = fetch('animals', 'user_id = ?', 'name', (session["user_id"],))
+        print(ans)
+        print(len(ans))
         tableString = ""
         for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
             if (i%3==0):
