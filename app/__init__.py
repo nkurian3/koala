@@ -203,8 +203,12 @@ def rewards():
     response = ""
     db = get_db() 
     money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
-    trivia = getTrivia()
-    session["correct_answer"] = trivia["correct"]
+    trivia = session.get ("trivia") 
+    
+    if not trivia: 
+        trivia = getTrivia() 
+        session ["trivia"] = trivia
+        session ["correct_answer"] = trivia["correct"]
 
     if request.method == "POST": 
         selected = request.form.get ("answer")
@@ -212,12 +216,14 @@ def rewards():
         if selected == correct: 
             db.execute ("UPDATE users SET money = money + 10 WHERE user_id = ?", (session["user_id"],))
             db.commit() 
+            money += 10
             response = "Correct! Here's 10 coins!"
         else: 
             response = f"Incorrect! The correct answer was: {correct}"
     #reloads another question & updates info
-    trivia = getTrivia()
-    session ["correct_answer"] = trivia["correct"]
+        trivia = getTrivia()
+        session ["trivia"] = trivia
+        session ["correct_answer"] = trivia["correct"]
     db.close()
     return render_template("rewards.html", question = trivia["question"], answers = trivia["answers"], response = response, money = money)
 
