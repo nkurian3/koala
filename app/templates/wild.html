@@ -65,10 +65,11 @@
           <input type="hidden" name="name" id="input-name">
           <input type="hidden" name="species" id="input-species">
           <input type="hidden" name="health" id="input-health">
+          <input type="hidden" name="action" value="rescue">
 
 
           {% if space %}
-          <button id="rescue" type="submit" class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Rescue Animal</button>
+          <button value = "1" name = "newL" id="rescue" type="submit" class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Rescue Animal</button>
           {% endif %}
 
         </form>

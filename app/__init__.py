@@ -48,11 +48,10 @@ c.execute(
     CREATE TABLE IF NOT EXISTS animals (
     animal_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
-    enclosure_number INTEGER,
     last_fed INTEGER,
     species TEXT,
-    habitat INTEGER,
-    health INTEGER,
+    health TEXT,
+    name TEXT,
     FOREIGN KEY(user_id) REFERENCES users(user_id))
     """
 )
@@ -177,7 +176,25 @@ def wild():
     space = currEns > currAns
 
 
+    if request.method == "POST":
+        if request.form.get("action") == "rescue":
+            db = sqlite3.connect(DB_FILE)
+            c = db.cursor()
+            c.execute('''UPDATE users 
+            SET animals = animals + 1
+            WHERE user_id = ?
+            ''', (session["user_id"],))
 
+            print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
+            c.execute('''
+            INSERT INTO animals (user_id, last_fed, species, health, name)
+            VALUES (?, ?, ?, ?, ?)
+            ''', (session["user_id"], 0, request.form["species"], request.form["health"], request.form["name"],))
+
+            db.commit()
+            db.close()
+        return redirect('/enclosure')
+            
 
 
     return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
@@ -198,6 +215,7 @@ def getTrivia():
 @app.route("/rewards", methods=["GET", "POST"])
 
 def rewards():
+<<<<<<< HEAD
     if "user_id" not in session: 
         return redirect ("/login")
     response = ""
@@ -226,6 +244,17 @@ def rewards():
         session ["correct_answer"] = trivia["correct"]
     db.close()
     return render_template("rewards.html", question = trivia["question"], answers = trivia["answers"], response = response, money = money)
+
+
+
+
+@app.route("/enclosure", methods=["GET", "POST"])
+def enclosure():
+    return render_template("enclosure.html")
+
+
+
+
 
 
 def fetch(table, criteria, data, params=()):
