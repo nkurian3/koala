@@ -21,7 +21,7 @@ function moving(animal){
     const curr = animal.getBoundingClientRect().left;
     const changeX = rX - curr;
 
-    animal.style.transform = changeX < 0? "scaleX(-1)" : "scaleX(1)";
+    animal.style.transform = changeX < 0? "scaleX(1)" : "scaleX(-1)";
     animal.style.left = rX + 'px';
     setTimeout(() => moving(animal), 3000);
 } 
