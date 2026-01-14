@@ -71,18 +71,18 @@ def homepage():
     if not "user_id" in session:
         return redirect("/login")
     else:
-        ans = fetch('animals', 'user_id = ?', 'name', (session["user_id"],))
+        ans = fetch('animals', 'user_id = ? AND released == 0', 'name', (session["user_id"],))
         names = []
         for i in range(len(ans)):
             names += ans[i]
         print(names)
 
-        ans2 = fetch('animals', 'user_id = ?', 'path', (session["user_id"],))
+        ans2 = fetch('animals', 'user_id = ? AND released == 0', 'path', (session["user_id"],))
         paths = []
         for i in range(len(ans2)):
             paths += ans2[i]
 
-        ans3 = fetch('animals', 'user_id = ?', 'animal_id', (session["user_id"],))
+        ans3 = fetch('animals', 'user_id = ? AND released == 0', 'animal_id', (session["user_id"],))
         ids = []
         for i in range(len(ans3)):
             ids += ans3[i]
@@ -93,7 +93,7 @@ def homepage():
 
         for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
             if (i%3==0):
-                tableString +="<tr class= 'flex justify-between'>"
+                tableString +="<tr class= 'flex justify-between p-5'>"
             
             tableString+= f"""
             <td>"""
@@ -106,6 +106,11 @@ def homepage():
                 <button>
                 <div class="relative">
                 <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute  animalsh">
+                """
+
+            else:
+                tableString+="""
+                <h2>Empty Enclosure</h2>
                 """
 
             tableString += """
@@ -259,6 +264,32 @@ def enclosure(a_rowid):
     ra = int(request.args.get("rand", '5'))
     n = request.args.get("name", "")'''
    
+    if request.method == "POST":
+        if request.form.get("action") == "feeding":
+            db = sqlite3.connect(DB_FILE)
+            c = db.cursor()
+            c.execute('''UPDATE animals 
+            SET health = health + 1
+            WHERE animal_id = ?
+            ''', (int(request.form.get("id")),))
+           
+            db.commit()
+            db.close()
+        if request.form.get("action") == "releasing":
+            db = sqlite3.connect(DB_FILE)
+            c = db.cursor()
+            c.execute('''UPDATE users 
+            SET animals = animals - 1
+            WHERE user_id = ?
+            ''', (session["user_id"],))
+
+            c.execute('''UPDATE animals 
+            SET released = 1
+            WHERE animal_id = ?
+            ''', (int(request.form.get("id")),))
+            db.commit()
+            db.close()
+            return redirect("/")
 
     ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
     print("EEEEEEEEEEEEEEE")
@@ -267,7 +298,7 @@ def enclosure(a_rowid):
     ra = ev[0][4] * 10
     n = ev[0][5]
 
-    return render_template("enclosure.html", p = ev[0][6], r = rad, strR = strR, rInt = ra, n = n)
+    return render_template("enclosure.html", p = ev[0][6], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid)
 
 
 

@@ -60,7 +60,23 @@
         <div id="myBar" class="bar" style="{{ strR }}" > {{r}}</div>
         </div>
         <br>
-        <button id = "feed"  data-r = '{{rInt}}' >Feed</button>
+
+        <form id="formy" action="/enclosure/{{a}}" method="POST">
+          <input type="hidden" name="action" value="feeding">
+          <input type="hidden" name="id" value= {{a}}>
+
+          <button id = "feed"  data-r = '{{rInt}}' >Feed</button>
+        </form>
+
+
+        <form id="formy2" action="/enclosure/{{a}}" method="POST">
+        
+        <input type="hidden" name="id" value= {{a}}>
+        <input type="hidden" name="action" value="releasing">
+
+        <button id = "release" style="display: none;" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Release Animal</button>
+      
+        </form>
 
         
 

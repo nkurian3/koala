@@ -1,33 +1,24 @@
 const elem = document.getElementById("myBar");
     const fee = document.getElementById("feed")
     const pp = document.getElementById("why")
+    const rel = document.getElementById("release")
+
 
 
     pp.onclick = function(){
         if (parseInt(fee.dataset.r) < 100) {
             fee.style.display = "inline-block";
+            rel.style.display = "none";
+
         } else {
             fee.style.display = "none";
+            rel.style.display = "inline-block";
+
         }
 
     }
     
 
-
-    fee.onclick = function() {
-        let width = parseInt(this.dataset.r); 
-        width += 10;
-        this.dataset.r = width;
-        elem.style.width = width + '%';
-        elem.textContent = width + '%';
-
-        if (width < 100) {
-            fee.style.display = "inline-block";
-        } else {
-            fee.style.display = "none";
-        }
-
-    }
 
 
 
