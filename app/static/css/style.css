@@ -12,13 +12,6 @@
   font-size: 25px;
 }
 
-.animals{
-  height: 25%;
-  width: 20%;
-  top: 70vh;
-
-  transition: left 3s linear;
-}
 
 .barbase {
   width: 100%;
@@ -48,21 +41,10 @@
 
 
 
+.animals{
+  height: 25%;
+  width: 20%;
+  top: 70vh;
 
-
-
-
-@keyframes moving{
-    from {
-        transform: translateX(70%);
-    }
-    to {
-        transform: translateX(-70%);
-    }
-}
-
-
-
-.moving {
-  animation: moving 5s;
+  transition: left 3s linear;
 }
