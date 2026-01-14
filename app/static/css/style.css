@@ -17,6 +17,7 @@
   width: 20%;
   top: 70vh;
 
+  transition: left 3s linear;
 }
 
 .barbase {
@@ -43,12 +44,6 @@
   margin: 10;
   background-color: white;
 }
-
-
-
-
-
-
 
 
 
