@@ -11,11 +11,15 @@ from flask import session, request, redirect
 import os
 #import requests
 import time
+import urllib.request
+import urllib.error
+import json
+
 
 # Flask
 app = Flask(__name__)
 app.secret_key = "afsdfhbksadbfh"
-
+url_err = "url error"
 # SQLite
 DB_FILE = "data.db"
 
@@ -154,13 +158,44 @@ def wild():
 
     return render_template("wild.html", anim = anim)
 
+def getTrivia():
+    url = "https://opentdb.com/api.php?amount=1&type=multiple"
+    data = get_data(url)
+    if not data or "results" not in data: 
+        return {"question": "Error fetching question.", "correct": "", "answers": []}
+    q = data["results"][0]
+    question = q["question"]
+    correct = q["correct_answer"]
+    incorrect = q["incorrect_answers"]
+    answers = incorrect + [correct]
+    random.shuffle(answers)
+    return {"question": question, "correct": correct, "answers": answers}
+
 @app.route("/rewards", methods=["GET", "POST"])
+
 def rewards():
-    return render_template("rewards.html")
+    if "user_id" not in session: 
+        return redirect ("/login")
+    response = ""
+    db = get_db() 
+    money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    trivia = getTrivia()
+    session["correct_answer"] = trivia["correct"]
 
-
-
-
+    if request.method == "POST": 
+        selected = request.form.get ("answer")
+        correct = session.get ("correct_answer")
+        if selected == correct: 
+            db.execute ("UPDATE users SET money = money + 10 WHERE user_id = ?", (session["user_id"],))
+            db.commit() 
+            response = "Correct! Here's 10 coins!"
+        else: 
+            response = f"Incorrect! The correct answer was: {correct}"
+    #reloads another question & updates info
+    trivia = getTrivia()
+    session ["correct_answer"] = trivia["correct"]
+    db.close()
+    return render_template("rewards.html", question = trivia["question"], answers = trivia["answers"], response = response, money = money)
 
 
 def fetch(table, criteria, data, params=()):
@@ -171,6 +206,15 @@ def fetch(table, criteria, data, params=()):
     data = c.fetchall()
     db.close()
     return data
+
+def get_data(url):
+    try:
+        response = urllib.request.urlopen(url) # This sends the HTTP GET request to Nasa API and urlopen returns a response obj.
+        data = response.read().decode() # This decodes the response, which is in bytes, into string and then loads the json string into a python dictionary: data.
+        return json.loads (data)
+    except Exception as e:
+        print ("Error fetching trivia:", e)
+        return None 
 
 # Flask
 if __name__ == "__main__":
