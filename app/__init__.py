@@ -33,7 +33,8 @@ c.execute(
     CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
-    password TEXT)
+    password TEXT
+    enclosures INTEGER)
     """
 )
 
@@ -46,6 +47,7 @@ c.execute(
     last_fed INTEGER,
     species TEXT,
     habitat INTEGER,
+    health INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(user_id))
     """
 )
@@ -121,11 +123,12 @@ def register():
             c.execute("SELECT COUNT(*) FROM users")
             u_id = c.fetchall()[0][0]
             c.execute(
-                "INSERT INTO users VALUES (?, ?, ?)",
+                "INSERT INTO users VALUES (?, ?, ?, ?)",
                 (
                     u_id,
                     request.form["username"],
                     request.form["password"],
+                    0
                 )
             )
             db.commit()
@@ -140,6 +143,15 @@ def profile():
 
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
+    anim = []
+    basepath = "static/animals"
+
+    for i in range(random.randint(1, 6)):
+        image = random.choice(os.listdir(basepath))
+        path = os.path.join(basepath, image)
+        anim += [path]
+    print(anim)
+
     return render_template("wild.html")
 
 @app.route("/rewards", methods=["GET", "POST"])
