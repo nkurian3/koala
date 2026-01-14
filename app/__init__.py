@@ -54,6 +54,8 @@ c.execute(
     species TEXT,
     health INTEGER,
     name TEXT,
+    path TEXT,
+    released INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(user_id))
     """
 )
@@ -73,6 +75,10 @@ def homepage():
         ans = fetch('animals', 'user_id = ?', 'name', (session["user_id"],))
         print(ans)
         print(len(ans))
+        names = []
+        for i in range(len(ans)):
+            names += ans[i]
+        print(names)
         tableString = ""
         for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
             if (i%3==0):
@@ -183,6 +189,11 @@ def wild():
     if request.method == "POST":
         if request.form.get("action") == "rescue":
             r = random.randint(2,7)
+
+
+            basepath = "/static/animal_animations"
+            image = request.form.get("species") + "_" + request.form.get("health") + ".gif"
+            path = os.path.join(basepath, image)
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
             c.execute('''UPDATE users 
@@ -191,20 +202,23 @@ def wild():
             ''', (session["user_id"],))
             print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
             c.execute('''
-            INSERT INTO animals (user_id, last_fed, species, health, name)
-            VALUES (?, ?, ?, ?, ?)
-            ''', (session["user_id"], 0, request.form.get("species"), r, request.form.get("name"),))
+            INSERT INTO animals (user_id, last_fed, species, health, name, path, released)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ''', (session["user_id"], 0, request.form.get("species"), r, request.form.get("name"), path, 0,))
 
             db.commit()
             db.close()
 
 
             ray = str(r)
-            basepath = "static/animal_animations"
-            image = request.form.get("species") + "_" + request.form.get("health") + ".gif"
-            path = os.path.join(basepath, image)
-        return redirect(url_for('enclosure', animal_path = path, rand = ray, name = request.form.get("name")))
+
+            a = fetch('animals', True, 'COUNT(*)')[0][0]
             
+        return redirect(f"/enclosure/{a}")
+           
+           # a = fetch('animals', True, 'COUNT(*)')[0][0]
+           # ev
+           # return redirect(f"/enclosure/{a}")
 
 
     return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
@@ -212,14 +226,22 @@ def wild():
 
 
 
-@app.route("/enclosure", methods=["GET", "POST"])
-def enclosure():
-    animal_path = request.args.get("animal_path", "")
+@app.route('/enclosure/<a_rowid>', methods=["GET", "POST"]) 
+def enclosure(a_rowid):
+    '''animal_path = request.args.get("animal_path", "")
     ra = int(request.args.get("rand", '5'))
-    n = request.args.get("name", "")
-    rad = str(ra * 10) + "%"
+    n = request.args.get("name", "")'''
+   
+
+    ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
+    print("EEEEEEEEEEEEEEE")
+    print(ev[0][6])
+    rad = str(ev[0][4] * 10) + "%"
     strR = "width:" + rad
-    return render_template("enclosure.html", p = animal_path, r = rad, strR = strR, rInt = ra * 10, n = n)
+    ra = ev[0][4] * 10
+    n = ev[0][5]
+
+    return render_template("enclosure.html", p = ev[0][6], r = rad, strR = strR, rInt = ra, n = n)
 
 
 
