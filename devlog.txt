@@ -45,3 +45,9 @@ naomiK -- 2026-01-14 5:34
   - implemented enclosure
   - implemented feeeding progress
   - worked on home
+
+naomiK -- 2026-01-14 18:34
+  - implemented buying food and enclosure choice
+  - hid feed button, dependent on available food
+  - implemented release process
+  - worked on home buttons to enclosures

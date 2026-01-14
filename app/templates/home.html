@@ -35,6 +35,25 @@
     </nav>
 
     <h1 class="text-3xl text-center uppercase my-3 font-bold">Koala Greets You!</h1>
+    
+    
+    {% if error %}
+    <div class="" role="alert">
+    {{ error | safe }}
+    </div>
+    {% endif %}
+
+    <h2> Money: ${{money}}</h2> 
+    <h2> Food: {{food}}</h2> 
+
+
+    <form id="f" action="/" method="POST">
+        
+        <input type="hidden" name="action" value="buyingF">
+
+        <button id = "buyf" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Buy Food</button>
+      
+    </form>
 
     <table class="w-full ">
         {{table|safe}}

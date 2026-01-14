@@ -124,8 +124,36 @@ def homepage():
         if not tableString.strip().endswith("</tr>"):
             tableString+="</tr>"
         
+        money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
+        feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
 
-        return render_template("home.html", table = tableString)
+
+
+        if request.method == "POST":
+            if request.form.get("action") == "buyingF":
+                
+                if money >= 10:
+                    db = sqlite3.connect(DB_FILE)
+                    c = db.cursor()
+
+                    c.execute('''UPDATE users 
+                    SET money = money - 10
+                    WHERE user_id = ?
+                    ''', (session["user_id"],))
+
+                    c.execute('''UPDATE users 
+                    SET food = food + 1
+                    WHERE user_id = ?
+                    ''', (session["user_id"],))
+
+                    db.commit()
+                    db.close()
+                    money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
+                    feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
+                else:
+                    return render_template("home.html", table = tableString, money = money, food = feed, error = "Not enough money!")
+
+        return render_template("home.html", table = tableString, money = money, food = feed, error = "")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -260,9 +288,7 @@ def wild():
 @app.route('/enclosure/<a_rowid>', methods=["GET", "POST"]) 
 def enclosure(a_rowid):
     print("a_rowid = " + a_rowid)
-    '''animal_path = request.args.get("animal_path", "")
-    ra = int(request.args.get("rand", '5'))
-    n = request.args.get("name", "")'''
+    
    
     if request.method == "POST":
         if request.form.get("action") == "feeding":
@@ -273,11 +299,19 @@ def enclosure(a_rowid):
             WHERE animal_id = ?
             ''', (int(request.form.get("id")),))
            
+            c.execute('''UPDATE users 
+            SET food = food - 1
+            WHERE user_id = ?
+            ''', (session["user_id"],))
+
             db.commit()
             db.close()
+
+
         if request.form.get("action") == "releasing":
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
+
             c.execute('''UPDATE users 
             SET animals = animals - 1
             WHERE user_id = ?
@@ -291,14 +325,18 @@ def enclosure(a_rowid):
             db.close()
             return redirect("/")
 
+    #info for food percentages--animal starts with random health below 100
     ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
-    print("EEEEEEEEEEEEEEE")
     rad = str(ev[0][4] * 10) + "%"
     strR = "width:" + rad
     ra = ev[0][4] * 10
     n = ev[0][5]
 
-    return render_template("enclosure.html", p = ev[0][6], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid)
+    #check if food is available
+    currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
+    canFeed = currF > 0
+
+    return render_template("enclosure.html", p = ev[0][6], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid, canFeed = canFeed)
 
 
 
