@@ -1,4 +1,4 @@
-# Koala 
+# Animal Rescues by Koala
 
 ## Roles/Roster:
 Project Manager: Naomi Kurian  
