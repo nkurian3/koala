@@ -49,6 +49,12 @@
   transition: left 3s linear;
 }
 
+.animalsh{
+  height: 100%;
+  width: 100%;
+ 
+}
+
 .pops{
   justify-content: center;
 }

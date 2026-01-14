@@ -71,22 +71,48 @@ def homepage():
     if not "user_id" in session:
         return redirect("/login")
     else:
-        
         ans = fetch('animals', 'user_id = ?', 'name', (session["user_id"],))
-        print(ans)
-        print(len(ans))
         names = []
         for i in range(len(ans)):
             names += ans[i]
         print(names)
+
+        ans2 = fetch('animals', 'user_id = ?', 'path', (session["user_id"],))
+        paths = []
+        for i in range(len(ans2)):
+            paths += ans2[i]
+
+        ans3 = fetch('animals', 'user_id = ?', 'animal_id', (session["user_id"],))
+        ids = []
+        for i in range(len(ans3)):
+            ids += ans3[i]
+
+        print(ids)
         tableString = ""
+
+
         for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
             if (i%3==0):
                 tableString +="<tr class= 'flex justify-between'>"
             
             tableString+= f"""
-            <td>
-                <img src="static/test2.jpg" alt="enclosure">
+            <td>"""
+
+            print(len(names))
+            if i < len(names):
+                tableString+=f"""
+                <h2>{names[i]}'s Enclosure</h2>
+                <form action="/enclosure/{ids[i]}" method="get">
+                <button>
+                <div class="relative">
+                <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute  animalsh">
+                """
+
+            tableString += """
+                <img src="static/test2.jpg" alt="enclosure" class =" top-0 z-10">
+                </div>
+                </button>
+                </form>
             </td>"""
             if (i%3==2):
                 tableString +="</tr>"
@@ -159,7 +185,7 @@ def profile():
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
     anim = []
-    names = ["Bob", "Henry", "Sally", "Chris", "Patricia", "Julia"]
+    names = ["Isabel", "Henry", "Sally", "Chris", "Patricia", "Julia"]
     healths = []
     species = []
 
@@ -203,7 +229,7 @@ def wild():
             print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
             c.execute('''
             INSERT INTO animals (user_id, last_fed, species, health, name, path, released)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (session["user_id"], 0, request.form.get("species"), r, request.form.get("name"), path, 0,))
 
             db.commit()
@@ -228,6 +254,7 @@ def wild():
 
 @app.route('/enclosure/<a_rowid>', methods=["GET", "POST"]) 
 def enclosure(a_rowid):
+    print("a_rowid = " + a_rowid)
     '''animal_path = request.args.get("animal_path", "")
     ra = int(request.args.get("rand", '5'))
     n = request.args.get("name", "")'''
@@ -235,7 +262,6 @@ def enclosure(a_rowid):
 
     ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
     print("EEEEEEEEEEEEEEE")
-    print(ev[0][6])
     rad = str(ev[0][4] * 10) + "%"
     strR = "width:" + rad
     ra = ev[0][4] * 10
