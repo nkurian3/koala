@@ -256,8 +256,10 @@ def wild():
 
 
             basepath = "/static/animal_animations"
-            image = request.form.get("species") + "_" + request.form.get("health") + ".gif"
-            path = os.path.join(basepath, image)
+            image = f"{request.form.get('species')}_{request.form.get('health')}.gif"
+            path = f"{basepath}/{image}"
+
+
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
             c.execute('''UPDATE users 
@@ -336,6 +338,7 @@ def enclosure(a_rowid):
     strR = "width:" + rad
     ra = ev[0][4] * 10
     n = ev[0][5]
+    print(ev[0][6])
 
     #check if food is available
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
