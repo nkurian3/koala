@@ -285,21 +285,15 @@ def wild():
 
             a = fetch('animals', True, 'COUNT(*)')[0][0]
 
-<<<<<<< HEAD
         return redirect(f"/enclosure/{a}")
 
            # a = fetch('animals', True, 'COUNT(*)')[0][0]
            # ev
            # return redirect(f"/enclosure/{a}")
-=======
-            print(a)
-            print("/enclosure/" + str(a))
+
             
         return redirect(f"/enclosure/{a}")
-           
-        
->>>>>>> 403c78e12ab7f2e90b3e92b93283086d8c0378f3
-
+    
 
     return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
 
