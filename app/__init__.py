@@ -227,7 +227,7 @@ def wild():
     healths = []
     species = []
 
-    basepath = "static/animal_animations"
+    basepath = "./static/animal_animations"
     r = random.randint(1, 6)
 
 
