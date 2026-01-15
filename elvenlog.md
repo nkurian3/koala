@@ -45,6 +45,7 @@ Gemini 3 family
 
   HTML:
   Place both images inside a parent container div. 
+
   html
 ```
   <div class="image-container">
@@ -52,6 +53,7 @@ Gemini 3 family
       <img class="image2" src="image2.jpg" alt="Description of image 2">
   </div>
 ```
+
 
 
 
