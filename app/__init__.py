@@ -281,13 +281,24 @@ def wild():
 
             ray = str(r)
 
+            print("BBBBBBBBBBBBBBBB")
+
             a = fetch('animals', True, 'COUNT(*)')[0][0]
 
+<<<<<<< HEAD
         return redirect(f"/enclosure/{a}")
 
            # a = fetch('animals', True, 'COUNT(*)')[0][0]
            # ev
            # return redirect(f"/enclosure/{a}")
+=======
+            print(a)
+            print("/enclosure/" + str(a))
+            
+        return redirect(f"/enclosure/{a}")
+           
+        
+>>>>>>> 403c78e12ab7f2e90b3e92b93283086d8c0378f3
 
 
     return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
@@ -337,17 +348,25 @@ def enclosure(a_rowid):
 
     #info for food percentages--animal starts with random health below 100
     ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
-    rad = str(ev[0][4] * 10) + "%"
+
+    print(a_rowid)
+    print('AAAAAAAAAAAAAAAAAAA')
+    print(ev)
+
+
+
+
+    rad = str(ev[0][3] * 10) + "%"
     strR = "width:" + rad
-    ra = ev[0][4] * 10
-    n = ev[0][5]
-    print(ev[0][6])
+    ra = ev[0][3] * 10
+    n = ev[0][4]
+
 
     #check if food is available
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
     canFeed = currF > 0
 
-    return render_template("enclosure.html", p = ev[0][6], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid, canFeed = canFeed)
+    return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid, canFeed = canFeed)
 
 
 
