@@ -218,7 +218,10 @@ def profile():
         tableString+="</tr>"
     
     user = fetch('users', 'user_id = ?', 'username', (session["user_id"],))[0][0]
-    return render_template("profile.html", table = tableString, user = user)
+    money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
+    food = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
+
+    return render_template("profile.html", table = tableString, user = user, money = money, food = food)
 
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
@@ -445,7 +448,7 @@ def tableString(r):
         <td class = "p-4 border border-gray-300">"""
         if i < len(names):
             tableString+=f"""
-            <h2>{names[i]}'s Enclosure</h2>
+            <p class="uppercase text-xs">{names[i]}'s Enclosure</p>
             <form action="/enclosure/{ids[i]}" method="get">
             <button>
             <div class="relative">
@@ -454,7 +457,7 @@ def tableString(r):
 
         else:
             tableString+="""
-            <h2>Empty Enclosure</h2>
+            <p class="uppercase text-xs">Empty Enclosure</p>
             """
 
         tableString += """
