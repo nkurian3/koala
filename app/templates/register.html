@@ -16,7 +16,7 @@ P02 – Makers Makin' It, Act I
 
   </head>
 
-  <body class="bg-[url('../static/test.jpeg')] bg-auto bg-center">
+  <body class="min-h-screen bg-[url('../static/backdrops/registration_backdrop.png')] bg-cover bg-center bg-no-repeat">
 
     <nav class = "">
       <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
@@ -30,43 +30,40 @@ P02 – Makers Makin' It, Act I
     </nav>
 
 
+  <div class="mx-[5%] my-[2%] flex flex-col items-left">
+    <div class="w-[500px] my-5 bg-gray-400 flex flex-col items-center rounded-md">
 
+    <h1 class="text-6xl text-center uppercase mt-5 font-bold">Create Your Account</h1>
+    <p class="text-1xl text-center mb-5">Enter a new username and password below:</p>
 
+    <form method="POST" action="/register" class="my-3">
 
-    <div class="mx-[5%] my-[5%] flex flex-col items-left">
-      <div class="w-[500px] my-5 bg-gray-400 flex flex-col items-center rounded-md">
-
-      <h1 class="text-6xl text-center uppercase mt-5 font-bold">Create Your Account</h1>
-      <p class="text-1xl text-center mb-5">Enter a new username and password below:</p>
-
-      <form method='POST' action="/register" class="my-3">
-
-        <div class="m-[20px] relative">
-          <label for="username" class="form-label p-2 uppercase font-bold text-center bg-gray-500 rounded-lg">USERNAME:</label>
-          <input type="text" class="form-control ml-[100px]" name="username" id="username" required>
+        <div class="m-[20px] grid grid-cols-2 items-center">
+          <label for="username" class="justify-self-start py-1 px-5 uppercase font-bold text-center bg-gray-500 rounded-lg">USERNAME:</label>
+          <input type="text" name="username" id="username" required class="justify-self-end w-50 px-4 py-1 text-lg rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600">
         </div>
 
-        <div class="m-[20px]">
-          <label for="password" class="form-label p-2 uppercase font-bold text-center bg-gray-500 rounded-lg">PASSWORD:</label>
-          <input type="password" class="form-control ml-[100px]" name="password" id="password" required>
+        <div class="m-[20px] grid grid-cols-2 items-center">
+          <label for="password" class="justify-self-start py-1 px-5 uppercase font-bold text-center bg-gray-500 rounded-lg">PASSWORD:</label>
+          <input type="password" name="password" id="password" required class="justify-self-end w-50 px-4 py-1 text-lg rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600">
         </div>
 
-        <div class="m-[20px]">
-          <label for="password" class="form-label p-2 uppercase font-bold text-center bg-gray-500 rounded-lg">CONFIRM PASSWORD:</label>
-          <input type="password" class="form-control ml-[10px]" name="confirm" id="confirm" required>
+        <div class="m-[20px] grid grid-cols-2 items-center">
+          <label for="confirm" class="justify-self-start py-1 px-5 uppercase font-bold text-center bg-gray-500 rounded-lg">CONFIRM PASSWORD:</label>
+          <input type="password" name="confirm" id="confirm" required class="justify-self-end w-50 px-4 py-1 text-lg rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-600">
         </div>
 
-        <div class="m-[40px] d-grid gap-2">
-          <input type="submit" name="sub1" class="font-semibold bg-gray-800 rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 mb-5 px-5" value="Register">
+        <div class="m-[20px] d-grid gap-2">
+          <input type="submit" name="sub1" class="font-semibold bg-gray-800 rounded-xl text-white hover:bg-white hover:text-gray-800 py-3 mb-5 px-5 transition" value="Register">
         </div>
 
         {% if error %}
-          <div class="p-2 m-2 uppercase font-semibold rounded-lg text-white" role="alert">
-          {{ error | safe }}
-          </div>
+        <div class="p-2 m-2 uppercase font-semibold rounded-lg text-white">
+        {{ error | safe }}
+        </div>
         {% endif %}
-      </form>
 
+      </form>
     </div>
   </div>
 
