@@ -1,5 +1,3 @@
-
-
 const animals = document.getElementsByClassName("animals");
 
 

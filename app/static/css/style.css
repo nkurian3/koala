@@ -1,3 +1,17 @@
+@font-face {
+  font-family: font;
+  src: url(/static/font/Inter-VariableFont_opsz,wght.ttf);
+}
+
+html, body {
+  font-family: font;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 /* ENCLOSURE */
 :popover-open {
   width: 50%;
