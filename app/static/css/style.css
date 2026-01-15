@@ -66,8 +66,13 @@ html, body {
 .animalsh{
   height: 100%;
   width: 100%;
- 
 }
+
+.animalse{
+  height: 50%;
+  width: 50%;
+}
+
 
 .pops{
   justify-content: center;
