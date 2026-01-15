@@ -378,10 +378,10 @@ def rewards():
         selected = request.form.get ("answer")
         correct = session.get ("correct_answer")
         if selected == correct: 
-            db.execute ("UPDATE users SET money = money + 900 WHERE user_id = ?", (session["user_id"],))
+            db.execute ("UPDATE users SET money = money + 30 WHERE user_id = ?", (session["user_id"],))
             db.commit() 
-            money += 10
-            response = "Correct! Here's 10 coins!"
+            money += 30
+            response = "Correct! Here's 30 coins!"
         else: 
             response = f"Incorrect! The correct answer was: {correct}"
     #reloads another question & updates info
