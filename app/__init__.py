@@ -446,7 +446,7 @@ def tableString(r):
             <form action="/enclosure/{ids[i]}" method="get">
             <button>
             <div class="relative">
-            <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute  animalsh">
+            <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute animalsh">
             """
 
         else:
