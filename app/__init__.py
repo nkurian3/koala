@@ -50,7 +50,6 @@ c.execute(
     CREATE TABLE IF NOT EXISTS animals (
     animal_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
-    last_fed INTEGER,
     species TEXT,
     health INTEGER,
     name TEXT,
@@ -267,9 +266,9 @@ def wild():
             ''', (session["user_id"],))
             print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
             c.execute('''
-            INSERT INTO animals (user_id, last_fed, species, health, name, path, released)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (session["user_id"], 0, request.form.get("species"), r, request.form.get("name"), path, 0,))
+            INSERT INTO animals (user_id, species, health, name, path, released)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ''', (session["user_id"], request.form.get("species"), r, request.form.get("name"), path, 0,))
 
             db.commit()
             db.close()

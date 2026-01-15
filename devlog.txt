@@ -51,3 +51,4 @@ naomiK -- 2026-01-14 18:34
   - hid feed button, dependent on available food
   - implemented release process
   - worked on home buttons to enclosures
+  - edited values in user (added food) and animal (removed time) in database to make everything more doable and convenient
