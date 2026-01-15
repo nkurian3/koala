@@ -442,7 +442,7 @@ def tableString(r):
             tableString +="<tr class= 'flex justify-between p-5'>"
         
         tableString+= f"""
-        <td class = "p-4">"""
+        <td class = "p-4 border border-gray-300">"""
         if i < len(names):
             tableString+=f"""
             <h2>{names[i]}'s Enclosure</h2>
