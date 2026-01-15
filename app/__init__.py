@@ -218,7 +218,10 @@ def profile():
         tableString+="</tr>"
     
     user = fetch('users', 'user_id = ?', 'username', (session["user_id"],))[0][0]
-    return render_template("profile.html", table = tableString, user = user)
+    money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
+    food = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
+
+    return render_template("profile.html", table = tableString, user = user, money = money, food = food)
 
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
