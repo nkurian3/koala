@@ -455,7 +455,7 @@ def tableString(r):
             """
 
         tableString += """
-            <img src="static/test2.jpg" alt="enclosure" class =" top-0 z-10">
+            <img src="static/backdrops/enclosure_backdrop.png" alt="enclosure" class =" top-0 z-10">
             </div>
             </button>
             </form>
