@@ -12,6 +12,47 @@ html, body {
   overflow-x: hidden;
 }
 
+
+:popover-open {
+  width: 50%;
+  height: 100;
+  position: absolute;
+  inset: unset;
+  bottom: 25px;
+  left: 25px;
+  margin: 0;
+  color: black;
+  background-color: AliceBlue;
+  font-size: 25px;
+}
+
+
+.barbase {
+  width: 100%;
+  bottom: 25px;
+  left: 25px;
+  margin: 10;
+  background-color: white;
+}
+.bar {
+  width: 90%;
+  bottom: 25px;
+  left: 25px;
+  margin: 0;
+  color: white;
+  background-color: green;
+  font-size: 25px;
+}
+
+.feedBut {
+  width: 30%;
+  bottom: 25px;
+  left: 25px;
+  margin: 10;
+  background-color: white;
+}
+
+
 .animals{
   height: 25%;
   width: 20%;
