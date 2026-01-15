@@ -17,7 +17,7 @@
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
     <script src="/static/js/script.js" defer></script>
   </head>
-  
+
   <body class="min-h-screen bg-[url('../static/backdrops/wild_backdrop.png')] bg-cover bg-center bg-no-repeat">
 
 
@@ -66,14 +66,14 @@
           {% endif %}
 
         </form>
-      
+
       </p>
       </div>
     </div>
 
 
     {% for i in range(anim|length) %}
-      <button datatype = "" class = "moving btn" 
+      <button datatype = "" class = "moving btn"
       data-name = {{names[i]}}
       data-species = {{species[i]}}
       data-health = {{healths[i]}}>

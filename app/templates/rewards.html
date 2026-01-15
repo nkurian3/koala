@@ -35,13 +35,19 @@
     </nav>
 
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold">Rewards Page</h1>
-    <h2> Money: ${{money}}</h2> 
-    <p> {{response}} </p> 
-    <form method = "POST"> 
-    <p> {{question}} </p>
-    {% for ans in answers %} 
-        <button type = "submit" name = "answer" value = "{{ans}}"> {{ans}} </button>
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white bg-gray-400 p-3">Answer Correctly for $10!</h1>
+
+    <div class="bg-gray-400 my-4 p-4 mx-6">
+       <h2 class="font-semibold uppercase"> Your Balance: ${{money}}</h2>
+    </div>
+
+    <div class="bg-gray-400 my-4 p-4 mx-6">
+       <h2 class="font-semibold uppercase"> {{question}}</h2>
+    </div>
+
+    <form method = "POST">
+    {% for ans in answers %}
+        <button type = "submit" name = "answer" value = "{{ans}}" class="font-semibold bg-gray-800 rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 mx-6"> {{ans}} </button>
     {% endfor %}
     </form>
 
