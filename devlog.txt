@@ -14,6 +14,11 @@ naomiK -- 2026-01-11 20:34
   - added function for each page in python file
   - edited navbar
 
+veronikaD -- 2026-01-11 20:34
+  - created all html templates (other than login/register)
+  - filled in each template with necesary tags and headings
+  - worked on home page design
+
 naomiK -- 2026-01-12 16:11
 INITIAL DD REVIEW
   Summary of peer review (rev'd by JAMEs and 2yellow2brown):
@@ -35,6 +40,11 @@ ashleyL -- 2026-01-13 00:25
   - tested pre-built Tailwind templates
   - brainstormed ideas on how to modify said template
 
+veronikaD -- 2026-01-13 20:00
+  - began animating gifs for characters
+  - debugged javascript code for characters
+  - designed enclosure layout
+
 isabelZ -- 2026-01-14 3:15
   - started the rewards & connected to the trivia 
   - tested & fixed errors for trivia database and selection 
@@ -44,7 +54,13 @@ naomiK -- 2026-01-14 5:34
   - implemented wild
   - implemented enclosure
   - implemented feeeding progress
-  - worked on home
+  - worked on home code
+
+veronikaD -- 2026-01-14 20:00
+  - implemented tailwind css for navbar
+  - began illustrating backdrops
+  - debugged table creation in profile
+  - debugged wild in profile
 
 naomiK -- 2026-01-14 18:34
   - implemented buying food and enclosure choice
@@ -52,3 +68,7 @@ naomiK -- 2026-01-14 18:34
   - implemented release process
   - worked on home buttons to enclosures
   - edited values in user (added food) and animal (removed time) in database to make everything more doable and convenient
+
+veronikaD -- 2026-01-15 15:00
+  - learned GIMP to modify gifs
+  - worked on javascript file to perfect character speed
