@@ -73,7 +73,7 @@ def homepage():
     if not "user_id" in session:
         return redirect("/login")
     else:
-        
+
         money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
         feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
 
@@ -82,17 +82,17 @@ def homepage():
 
         if request.method == "POST":
             if request.form.get("action") == "buyingF":
-                
+
                 if money >= 10:
                     db = sqlite3.connect(DB_FILE)
                     c = db.cursor()
 
-                    c.execute('''UPDATE users 
+                    c.execute('''UPDATE users
                     SET money = money - 10
                     WHERE user_id = ?
                     ''', (session["user_id"],))
 
-                    c.execute('''UPDATE users 
+                    c.execute('''UPDATE users
                     SET food = food + 1
                     WHERE user_id = ?
                     ''', (session["user_id"],))
@@ -106,17 +106,17 @@ def homepage():
 
 
             if request.form.get("action") == "buyingE":
-                
+
                 if money >= 50:
                     db = sqlite3.connect(DB_FILE)
                     c = db.cursor()
 
-                    c.execute('''UPDATE users 
+                    c.execute('''UPDATE users
                     SET money = money - 50
                     WHERE user_id = ?
                     ''', (session["user_id"],))
 
-                    c.execute('''UPDATE users 
+                    c.execute('''UPDATE users
                     SET enclosures = enclosures + 1
                     WHERE user_id = ?
                     ''', (session["user_id"],))
@@ -206,7 +206,7 @@ def profile():
     for i in range(len(ans)):
         if (i%3==0):
             tableString +="<tr class= 'flex justify-between p-5'>"
-        
+
         tableString+= f"""
         <td class = "p-4 border border-gray-300">
             <h2>{names[i]}</h2>
@@ -216,7 +216,7 @@ def profile():
             tableString +="</tr>"
     if not tableString.strip().endswith("</tr>"):
         tableString+="</tr>"
-    
+
     user = fetch('users', 'user_id = ?', 'username', (session["user_id"],))[0][0]
     money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
     food = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
@@ -240,7 +240,7 @@ def wild():
             image = "bear_idle.gif"
         path = os.path.join(basepath, image)
         anim += [path]
-        
+
         ima = image[:-4]
         arr = ima.split("_")
         print(arr)
@@ -265,7 +265,7 @@ def wild():
 
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
-            c.execute('''UPDATE users 
+            c.execute('''UPDATE users
             SET animals = animals + 1
             WHERE user_id = ?
             ''', (session["user_id"],))
@@ -282,9 +282,9 @@ def wild():
             ray = str(r)
 
             a = fetch('animals', True, 'COUNT(*)')[0][0]
-            
+
         return redirect(f"/enclosure/{a}")
-           
+
            # a = fetch('animals', True, 'COUNT(*)')[0][0]
            # ev
            # return redirect(f"/enclosure/{a}")
@@ -295,21 +295,21 @@ def wild():
 
 
 
-@app.route('/enclosure/<a_rowid>', methods=["GET", "POST"]) 
+@app.route('/enclosure/<a_rowid>', methods=["GET", "POST"])
 def enclosure(a_rowid):
     print("a_rowid = " + a_rowid)
-    
-   
+
+
     if request.method == "POST":
         if request.form.get("action") == "feeding":
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
-            c.execute('''UPDATE animals 
+            c.execute('''UPDATE animals
             SET health = health + 1
             WHERE animal_id = ?
             ''', (int(request.form.get("id")),))
-           
-            c.execute('''UPDATE users 
+
+            c.execute('''UPDATE users
             SET food = food - 1
             WHERE user_id = ?
             ''', (session["user_id"],))
@@ -322,12 +322,12 @@ def enclosure(a_rowid):
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
 
-            c.execute('''UPDATE users 
+            c.execute('''UPDATE users
             SET animals = animals - 1
             WHERE user_id = ?
             ''', (session["user_id"],))
 
-            c.execute('''UPDATE animals 
+            c.execute('''UPDATE animals
             SET released = 1
             WHERE animal_id = ?
             ''', (int(request.form.get("id")),))
@@ -355,7 +355,7 @@ def enclosure(a_rowid):
 def getTrivia():
     url = "https://opentdb.com/api.php?amount=1&type=multiple"
     data = get_data(url)
-    if not data or "results" not in data: 
+    if not data or "results" not in data:
         return {"question": "Error fetching question.", "correct": "", "answers": []}
     q = data["results"][0]
     question = q["question"]
@@ -368,27 +368,27 @@ def getTrivia():
 @app.route("/rewards", methods=["GET", "POST"])
 
 def rewards():
-    if "user_id" not in session: 
+    if "user_id" not in session:
         return redirect ("/login")
     response = ""
-    db = get_db() 
+    db = get_db()
     money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
-    trivia = session.get ("trivia") 
-    
-    if not trivia: 
-        trivia = getTrivia() 
+    trivia = session.get ("trivia")
+
+    if not trivia:
+        trivia = getTrivia()
         session ["trivia"] = trivia
         session ["correct_answer"] = trivia["correct"]
 
-    if request.method == "POST": 
+    if request.method == "POST":
         selected = request.form.get ("answer")
         correct = session.get ("correct_answer")
-        if selected == correct: 
+        if selected == correct:
             db.execute ("UPDATE users SET money = money + 30 WHERE user_id = ?", (session["user_id"],))
-            db.commit() 
+            db.commit()
             money += 30
             response = "Correct! Here's 30 coins!"
-        else: 
+        else:
             response = f"Incorrect! The correct answer was: {correct}"
     #reloads another question & updates info
         trivia = getTrivia()
@@ -418,7 +418,7 @@ def get_data(url):
         return json.loads (data)
     except Exception as e:
         print ("Error fetching trivia:", e)
-        return None 
+        return None
 
 def tableString(r):
     ans = fetch('animals', 'user_id = ? AND released == ?', 'name', (session["user_id"], r,))
@@ -443,7 +443,7 @@ def tableString(r):
     for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
         if (i%3==0):
             tableString +="<tr class= 'flex justify-between p-5'>"
-        
+
         tableString+= f"""
         <td class = "p-4 border border-gray-300">"""
         if i < len(names):
