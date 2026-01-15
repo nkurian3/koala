@@ -208,7 +208,7 @@ def profile():
             tableString +="<tr class= 'flex justify-between p-5'>"
         
         tableString+= f"""
-        <td class = "p-4">
+        <td class = "p-4 border border-gray-300">
             <h2>{names[i]}</h2>
             <img src={paths[i]} alt="animal" class=" top-0 z-0 animalsh">
         </td>"""
