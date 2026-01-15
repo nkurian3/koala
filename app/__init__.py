@@ -217,8 +217,8 @@ def profile():
     if not tableString.strip().endswith("</tr>"):
         tableString+="</tr>"
     
-
-    return render_template("profile.html", table = tableString)
+    user = fetch('users', 'user_id = ?', 'username', (session["user_id"],))[0][0]
+    return render_template("profile.html", table = tableString, user = user)
 
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
