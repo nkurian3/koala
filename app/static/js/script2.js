@@ -1,4 +1,4 @@
-const elem = document.getElementById("myBar");
+    const elem = document.getElementById("myBar");
     const fee = document.getElementById("feed")
     const pp = document.getElementById("why")
     const rel = document.getElementById("release")
@@ -6,8 +6,13 @@ const elem = document.getElementById("myBar");
 
 
     pp.onclick = function(){
-        if (parseInt(fee.dataset.r) < 100) {
-            fee.style.display = "inline-block";
+        if (parseInt(pp.dataset.r) < 100) {
+            if ((fee.dataset.c) == 'True') {
+                fee.style.display = "inline-block";
+            }
+            else{
+                fee.style.display = "none";
+            }
             rel.style.display = "none";
 
         } else {

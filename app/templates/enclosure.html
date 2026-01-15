@@ -49,7 +49,7 @@
 
      <!-- ANIMALS -->
 
-      <button popovertarget="myPopover" class = "moving btn" id = "why">
+      <button popovertarget="myPopover" class = "moving btn" id = "why" data-r = '{{rInt}}'>
         
       	<img src= {{p}} alt="Button Image" class = "animals absolute">
       </button>
@@ -62,14 +62,14 @@
         <br>
 
 
-        {% if canFeed%}
+       
         <form id="formy" action="/enclosure/{{a}}" method="POST">
-          <input type="hidden" name="action" value="feeding">
+          <input type="hidden" name="action" value="feeding" >
           <input type="hidden" name="id" value= {{a}}>
 
-          <button id = "feed"  data-r = '{{rInt}}' >Feed</button>
+          <button id = "feed" data-c = '{{canFeed}}'>Feed</button>
         </form>
-        {%endif%}
+       
 
         <form id="formy2" action="/enclosure/{{a}}" method="POST">
         

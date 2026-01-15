@@ -48,6 +48,7 @@ const ih = document.getElementById("input-health");
 for (let i = 0; i < buttons.length; i++) {
     buttons[i].onclick = function() {
         pops.style.display = "block";
+
         n.textContent = "Meet, " + this.dataset.name + "!";
         s.textContent = this.dataset.species;
         if (this.dataset.health === 'sick'){

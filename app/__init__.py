@@ -66,68 +66,20 @@ db.close()
 
 # HTML PAGES
 # LANDING PAGE
+
+
+
 @app.route("/", methods=["GET", "POST"])
 def homepage():
     if not "user_id" in session:
         return redirect("/login")
     else:
-        ans = fetch('animals', 'user_id = ? AND released == 0', 'name', (session["user_id"],))
-        names = []
-        for i in range(len(ans)):
-            names += ans[i]
-        print(names)
-
-        ans2 = fetch('animals', 'user_id = ? AND released == 0', 'path', (session["user_id"],))
-        paths = []
-        for i in range(len(ans2)):
-            paths += ans2[i]
-
-        ans3 = fetch('animals', 'user_id = ? AND released == 0', 'animal_id', (session["user_id"],))
-        ids = []
-        for i in range(len(ans3)):
-            ids += ans3[i]
-
-        print(ids)
-        tableString = ""
-
-
-        for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
-            if (i%3==0):
-                tableString +="<tr class= 'flex justify-between p-5'>"
-            
-            tableString+= f"""
-            <td>"""
-
-            print(len(names))
-            if i < len(names):
-                tableString+=f"""
-                <h2>{names[i]}'s Enclosure</h2>
-                <form action="/enclosure/{ids[i]}" method="get">
-                <button>
-                <div class="relative">
-                <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute  animalsh">
-                """
-
-            else:
-                tableString+="""
-                <h2>Empty Enclosure</h2>
-                """
-
-            tableString += """
-                <img src="static/test2.jpg" alt="enclosure" class =" top-0 z-10">
-                </div>
-                </button>
-                </form>
-            </td>"""
-            if (i%3==2):
-                tableString +="</tr>"
-        if not tableString.strip().endswith("</tr>"):
-            tableString+="</tr>"
         
         money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
         feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
 
-
+        t = ""
+        t = tableString(0)
 
         if request.method == "POST":
             if request.form.get("action") == "buyingF":
@@ -151,9 +103,35 @@ def homepage():
                     money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
                     feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
                 else:
-                    return render_template("home.html", table = tableString, money = money, food = feed, error = "Not enough money!")
+                    return render_template("home.html", table = t, money = money, food = feed, error = "Not enough money!")
 
-        return render_template("home.html", table = tableString, money = money, food = feed, error = "")
+
+            if request.form.get("action") == "buyingE":
+                
+                if money >= 50:
+                    db = sqlite3.connect(DB_FILE)
+                    c = db.cursor()
+
+                    c.execute('''UPDATE users 
+                    SET money = money - 50
+                    WHERE user_id = ?
+                    ''', (session["user_id"],))
+
+                    c.execute('''UPDATE users 
+                    SET enclosures = enclosures + 1
+                    WHERE user_id = ?
+                    ''', (session["user_id"],))
+
+                    db.commit()
+                    db.close()
+                    money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
+                    enclosures = fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]
+                    t = tableString(0)
+
+                else:
+                    return render_template("home.html", table = t, money = money, food = feed, error = "Not enough money!")
+
+        return render_template("home.html", table = t, money = money, food = feed, error = "")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -213,7 +191,35 @@ def register():
 
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
-    return render_template("profile.html")
+    ans = fetch('animals', 'user_id = ? AND released == ?', 'name', (session["user_id"], 1,))
+    names = []
+    for i in range(len(ans)):
+        names += ans[i]
+        print(names)
+
+    ans2 = fetch('animals', 'user_id = ? AND released == ?', 'path', (session["user_id"], 1,))
+    paths = []
+    for i in range(len(ans2)):
+        paths += ans2[i]
+
+
+    tableString = ""
+    for i in range(len(ans)):
+        if (i%3==0):
+            tableString +="<tr class= 'flex justify-between p-5'>"
+        
+        tableString+= f"""
+        <td class = "p-4">
+            <h2>{names[i]}</h2>
+            <img src={paths[i]} alt="animal" class=" top-0 z-0 animalsh">
+        </td>"""
+        if (i%3==2):
+            tableString +="</tr>"
+    if not tableString.strip().endswith("</tr>"):
+        tableString+="</tr>"
+    
+
+    return render_template("profile.html", table = tableString)
 
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
@@ -373,7 +379,7 @@ def rewards():
         selected = request.form.get ("answer")
         correct = session.get ("correct_answer")
         if selected == correct: 
-            db.execute ("UPDATE users SET money = money + 10 WHERE user_id = ?", (session["user_id"],))
+            db.execute ("UPDATE users SET money = money + 900 WHERE user_id = ?", (session["user_id"],))
             db.commit() 
             money += 10
             response = "Correct! Here's 10 coins!"
@@ -387,7 +393,7 @@ def rewards():
     return render_template("rewards.html", question = trivia["question"], answers = trivia["answers"], response = response, money = money)
 
 
-
+#helper fxns
 
 
 
@@ -408,6 +414,59 @@ def get_data(url):
     except Exception as e:
         print ("Error fetching trivia:", e)
         return None 
+
+def tableString(r):
+    ans = fetch('animals', 'user_id = ? AND released == ?', 'name', (session["user_id"], r,))
+    names = []
+    for i in range(len(ans)):
+        names += ans[i]
+        print(names)
+
+    ans2 = fetch('animals', 'user_id = ? AND released == ?', 'path', (session["user_id"], r,))
+    paths = []
+    for i in range(len(ans2)):
+        paths += ans2[i]
+
+    ans3 = fetch('animals', 'user_id = ? AND released == ?', 'animal_id', (session["user_id"], r,))
+    ids = []
+    for i in range(len(ans3)):
+        ids += ans3[i]
+
+    tableString = ""
+
+
+    for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
+        if (i%3==0):
+            tableString +="<tr class= 'flex justify-between p-5'>"
+        
+        tableString+= f"""
+        <td class = "p-4">"""
+        if i < len(names):
+            tableString+=f"""
+            <h2>{names[i]}'s Enclosure</h2>
+            <form action="/enclosure/{ids[i]}" method="get">
+            <button>
+            <div class="relative">
+            <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute  animalsh">
+            """
+
+        else:
+            tableString+="""
+            <h2>Empty Enclosure</h2>
+            """
+
+        tableString += """
+            <img src="static/test2.jpg" alt="enclosure" class =" top-0 z-10">
+            </div>
+            </button>
+            </form>
+        </td>"""
+        if (i%3==2):
+            tableString +="</tr>"
+    if not tableString.strip().endswith("</tr>"):
+        tableString+="</tr>"
+
+    return tableString
 
 # Flask
 if __name__ == "__main__":

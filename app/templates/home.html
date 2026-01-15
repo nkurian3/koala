@@ -51,11 +51,19 @@
         
         <input type="hidden" name="action" value="buyingF">
 
-        <button id = "buyf" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Buy Food</button>
+        <button id = "buyf" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Buy Food: $10</button>
       
     </form>
 
-    <table class="w-full ">
+    <form id="ff" action="/" method="POST">
+        
+        <input type="hidden" name="action" value="buyingE">
+
+        <button id = "buye" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Buy Enclosure: $50</button>
+      
+    </form>
+
+    <table class="w-full table-fixed border-separate border-spacing-x-4">
         {{table|safe}}
     </table>
 
