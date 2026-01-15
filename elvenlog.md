@@ -1,6 +1,7 @@
 liA -- 2026-1-12 11:48
 
 Gemini 3 family
+
   Method 2: Modern HTML <dialog> with Minimal JavaScript 
   The native <dialog> element is the recommended approach for modals/popups as it handles accessibility (like focus trapping and closing with the Escape key) automatically. 
 
@@ -39,6 +40,7 @@ Gemini 3 family
 kurianN -- 2026-1-14 11:32
 
 Gemini 3 family
+
   The most common and effective way to overlap images in CSS is by using absolute positioning within a relatively positioned container. This method offers precise control and ensures the layout remains manageable. 
   Method 1: Using Position and Z-Index (Recommended)
   This approach is flexible and widely used for creating contained, overlapping layouts. `
@@ -53,6 +55,7 @@ Gemini 3 family
       <img class="image2" src="image2.jpg" alt="Description of image 2">
   </div>
 ```
+
 
 
 
