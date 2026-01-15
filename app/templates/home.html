@@ -34,38 +34,39 @@
         </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold">Koala Greets You!</h1>
-    
-    
-    {% if error %}
-    <div class="" role="alert">
-    {{ error | safe }}
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white bg-gray-400 p-3">Explore Your Enclosures!</h1>
+
+
+    <div class="grid grid-cols-2 gap-x-4 mx-6">
+        <div class="bg-gray-400 my-4 p-4">
+           <h2 class="font-semibold uppercase"> Your Balance: ${{money}}</h2>
+            <form id="ff" action="/" method="POST">
+                <input type="hidden" name="action" value="buyingE">
+                <button id = "buye" class="font-semibold bg-gray-800 rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5">Buy Enclosure: $50</button>
+            </form>
+        </div>
+
+        <div class="bg-gray-400 my-4 p-4">
+            <h2 class="font-semibold uppercase"> Food Stock: {{food}}</h2>
+
+            <form id="f" action="/" method="POST">
+                <input type="hidden" name="action" value="buyingF">
+                <button id = "buyf" class="font-semibold bg-gray-800 rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5">Buy Food: $10</button>
+            </form>
+        </div>
     </div>
+
+    {% if error %}
+        <div class="bg-gray-400 mx-6 p-4" role="alert">
+        {{ error | safe }}
+        </div>
     {% endif %}
 
-    <h2> Money: ${{money}}</h2> 
-    <h2> Food: {{food}}</h2> 
-
-
-    <form id="f" action="/" method="POST">
-        
-        <input type="hidden" name="action" value="buyingF">
-
-        <button id = "buyf" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Buy Food: $10</button>
-      
-    </form>
-
-    <form id="ff" action="/" method="POST">
-        
-        <input type="hidden" name="action" value="buyingE">
-
-        <button id = "buye" class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">Buy Enclosure: $50</button>
-      
-    </form>
-
-    <table class="w-full table-fixed border-separate border-spacing-x-4">
-        {{table|safe}}
-    </table>
+    <div class="bg-gray-400 mx-6 my-4">
+        <table class="w-full table-fixed border-separate border-spacing-x-4">
+            {{table|safe}}
+        </table>
+    </div>
 
   </body>
 </html>
