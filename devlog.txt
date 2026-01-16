@@ -78,3 +78,7 @@ naomiK -- 2026-01-16 02:30
   - printed dd
   - video finished by team
   - Isabel corrected trivia errors
+
+isabelZ -- 2026-01-16 03:08
+  - finished adjusting question formats to fully html (punctuation) 
+  - video recording (everyone!)
