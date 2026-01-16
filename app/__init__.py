@@ -14,7 +14,7 @@ import time
 import urllib.request
 import urllib.error
 import json
-
+import html
 
 # Flask
 app = Flask(__name__)
@@ -368,12 +368,12 @@ def enclosure(a_rowid):
 def getTrivia():
     url = "https://opentdb.com/api.php?amount=1&type=multiple"
     data = get_data(url)
-    if not data or "results" not in data:
+    if not data or "results" not in data or not data["results"]:
         return {"question": "Error fetching question.", "correct": "", "answers": []}
     q = data["results"][0]
-    question = q["question"]
-    correct = q["correct_answer"]
-    incorrect = q["incorrect_answers"]
+    question = html.unescape(q["question"])
+    correct = html.unescape(q["correct_answer"])
+    incorrect = [html.unescape(a) for a in q["incorrect_answers"]]
     answers = incorrect + [correct]
     random.shuffle(answers)
     return {"question": question, "correct": correct, "answers": answers}
