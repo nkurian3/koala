@@ -85,6 +85,54 @@ URGENCY_COLORS = {
     "high":   "#dc2626",   # red
 }
 
+# add theme/backdrop columns if they don't exist yet
+try:
+    _db3 = get_db()
+    _db3.execute("ALTER TABLE users ADD COLUMN theme TEXT DEFAULT '#00A86B'")
+    _db3.commit()
+    _db3.close()
+except:
+    pass
+
+try:
+    _db4 = get_db()
+    _db4.execute("ALTER TABLE users ADD COLUMN backdrop TEXT DEFAULT '/static/backdrops/wild_backdrop.png'")
+    _db4.commit()
+    _db4.close()
+except:
+    pass
+
+THEMES = [
+    # Cities
+    {"name": "Lake Michigan",      "color": "#3B82F6", "backdrop": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&auto=format&fit=crop"},
+    {"name": "Paris Balcony",      "color": "#F43F5E", "backdrop": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1400&auto=format&fit=crop"},
+    {"name": "New York Streets",   "color": "#6366F1", "backdrop": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1400&auto=format&fit=crop"},
+    {"name": "Tokyo Night",        "color": "#EC4899", "backdrop": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1400&auto=format&fit=crop"},
+    {"name": "London Fog",         "color": "#64748B", "backdrop": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1400&auto=format&fit=crop"},
+    {"name": "Santorini",          "color": "#0EA5E9", "backdrop": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1400&auto=format&fit=crop"},
+    {"name": "Kyoto Temple",       "color": "#F97316", "backdrop": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1400&auto=format&fit=crop"},
+    {"name": "Amalfi Coast",       "color": "#10B981", "backdrop": "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=1400&auto=format&fit=crop"},
+    # Nature
+    {"name": "Sunny Meadow",       "color": "#00A86B", "backdrop": "/static/backdrops/wild_backdrop.png"},
+    {"name": "Snowy Mountains",    "color": "#64748B", "backdrop": "https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=1400&auto=format&fit=crop"},
+    {"name": "Golden Hour",        "color": "#EAB308", "backdrop": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&auto=format&fit=crop"},
+    {"name": "Cherry Blossom",     "color": "#F472B6", "backdrop": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1400&auto=format&fit=crop"},
+    {"name": "Lavender Hills",     "color": "#8B5CF6", "backdrop": "https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=1400&auto=format&fit=crop"},
+    {"name": "Tropical Beach",     "color": "#06B6D4", "backdrop": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&auto=format&fit=crop"},
+    {"name": "Desert Dunes",       "color": "#D97706", "backdrop": "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1400&auto=format&fit=crop"},
+    {"name": "Northern Lights",    "color": "#34D399", "backdrop": "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1400&auto=format&fit=crop"},
+    {"name": "Misty Rainforest",   "color": "#065F46", "backdrop": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1400&auto=format&fit=crop"},
+]
+
+def get_user_theme():
+    db = get_db()
+    row = db.execute("SELECT theme, backdrop FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()
+    db.close()
+    return {
+        "theme_color": (row[0] or "#00A86B") if row else "#00A86B",
+        "backdrop":    (row[1] or "/static/backdrops/wild_backdrop.png") if row else "/static/backdrops/wild_backdrop.png",
+    }
+
 # HTML PAGES
 # LANDING PAGE
 
@@ -98,6 +146,7 @@ def homepage():
 
         money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
         feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
+        theme = get_user_theme()
 
         t = ""
         t = tableString(0)
@@ -124,7 +173,7 @@ def homepage():
                     money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
                     feed = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
                 else:
-                    return render_template("home.html", table = t, money = money, food = feed, error = "Not enough money!")
+                    return render_template("home.html", table = t, money = money, food = feed, error = "Not enough money!", **theme)
 
 
             if request.form.get("action") == "buyingE":
@@ -150,9 +199,9 @@ def homepage():
                     t = tableString(0)
 
                 else:
-                    return render_template("home.html", table = t, money = money, food = feed, error = "Not enough money!")
+                    return render_template("home.html", table = t, money = money, food = feed, error = "Not enough money!", **theme)
 
-        return render_template("home.html", table = t, money = money, food = feed, error = "")
+        return render_template("home.html", table = t, money = money, food = feed, error = "", **theme)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -242,8 +291,9 @@ def profile():
     user = fetch('users', 'user_id = ?', 'username', (session["user_id"],))[0][0]
     money = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
     food = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
+    theme = get_user_theme()
 
-    return render_template("profile.html", table = tableString, user = user, money = money, food = food)
+    return render_template("profile.html", table = tableString, user = user, money = money, food = food, **theme)
 
 @app.route("/wild", methods=["GET", "POST"])
 def wild():
@@ -322,7 +372,8 @@ def wild():
         return redirect(f"/enclosure/{a}")
     
 
-    return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space)
+    theme = get_user_theme()
+    return render_template("wild.html", anim = anim, names = names[:r], healths = healths, species = species, space = space, **theme)
 
 
 
@@ -386,8 +437,9 @@ def enclosure(a_rowid):
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
     canFeed = currF >= food_cost
 
+    theme = get_user_theme()
     return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid,
-                           canFeed = canFeed, injury = injury_info, urgency_color = urgency_color, food_cost = food_cost)
+                           canFeed = canFeed, injury = injury_info, urgency_color = urgency_color, food_cost = food_cost, **theme)
 
 
 
@@ -440,7 +492,8 @@ def rewards():
     wordle_last = db.execute("SELECT wordle_last_played FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
     wordle_done = wordle_last == today
     db.close()
-    return render_template("rewards.html", money=money, wordle_done=wordle_done)
+    theme = get_user_theme()
+    return render_template("rewards.html", money=money, wordle_done=wordle_done, **theme)
 
 
 @app.route("/trivia", methods=["GET", "POST"])
@@ -469,8 +522,9 @@ def trivia():
         session["trivia"] = trivia
         session["correct_answer"] = trivia["correct"]
     db.close()
+    theme = get_user_theme()
     return render_template("trivia.html", question=trivia["question"], answers=trivia["answers"],
-                           response=response, money=money, theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+                           response=response, money=money, **theme)
 
 
 @app.route("/wordle", methods=["GET", "POST"])
@@ -502,8 +556,8 @@ def wordle():
         session["wordle_word"] = random.choice(WORDLE_WORDS)
     word = session["wordle_word"]
 
-    return render_template("wordle.html", word=word, already_played=already_played, money=money,
-                           theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+    theme = get_user_theme()
+    return render_template("wordle.html", word=word, already_played=already_played, money=money, **theme)
 
 
 @app.route("/hint", methods=["POST"])
@@ -568,14 +622,39 @@ def earn():
 def tetris():
     if "user_id" not in session:
         return redirect("/login")
-    return render_template("tetris.html", theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+    theme = get_user_theme()
+    return render_template("tetris.html", **theme)
 
 
 @app.route("/pacman")
 def pacman():
     if "user_id" not in session:
         return redirect("/login")
-    return render_template("pacman.html", theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+    theme = get_user_theme()
+    return render_template("pacman.html", **theme)
+
+
+@app.route("/customize", methods=["GET", "POST"])
+def customize():
+    if "user_id" not in session:
+        return redirect("/login")
+    if request.method == "POST":
+        action = request.form.get("action")
+        idx = int(request.form.get("idx", 0))
+        if action == "yes":
+            t = THEMES[idx]
+            db = get_db()
+            db.execute("UPDATE users SET theme = ?, backdrop = ? WHERE user_id = ?",
+                       (t["color"], t["backdrop"], session["user_id"]))
+            db.commit()
+            db.close()
+            return redirect("/")
+        elif action == "no":
+            idx = (idx + 1) % len(THEMES)
+            return redirect(f"/customize?idx={idx}")
+    idx = int(request.args.get("idx", 0)) % len(THEMES)
+    theme = THEMES[idx]
+    return render_template("customize.html", theme=theme, idx=idx, total=len(THEMES))
 
 
 #helper fxns

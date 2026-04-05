@@ -20,7 +20,7 @@
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
     <style>body { font-family: 'Poppins', sans-serif; }</style>
   </head>
-  <body class="min-h-screen bg-[url('../static/backdrops/enclosure_backdrop.png')] bg-cover bg-center bg-no-repeat">
+  <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
     <!--NAV BAR-->
     <nav class="">
@@ -34,11 +34,12 @@
           <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
           <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
           <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+          <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨</a>
         </div>
       </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white bg-green-700 p-3">Earn Coins!</h1>
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">Earn Coins!</h1>
 
     <div class="bg-white/80 rounded-2xl px-6 py-3 mx-6 mt-4 flex items-center gap-2 shadow">
       <span class="text-2xl">💰</span>

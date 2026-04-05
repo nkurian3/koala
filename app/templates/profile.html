@@ -12,54 +12,55 @@
 <html>
   <head>
     <title>PROFILE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
-
+    <style>body { font-family: 'Poppins', sans-serif; }</style>
   </head>
-  <body>
+  <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
     <!--NAV BAR-->
-    <nav class = "">
+    <nav class="">
       <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-          <a class="flex items-center" href="/" >
-              <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
-          </a>
-          <div class="p-5 flex flex-row justify-end space-x-4">
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/" onclick = "loadingScreen()">Home</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile" onclick = "loadingScreen()">Profile</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards" onclick = "loadingScreen()">Rewards</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild" onclick = "loadingScreen()">Wild</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout" onclick = "loadingScreen()">Logout</a>
-          </div>
+        <a class="flex items-center" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
+        </a>
+        <div class="p-5 flex flex-row justify-end space-x-4">
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+          <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨</a>
+        </div>
       </div>
     </nav>
 
-
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white bg-gray-400 p-3">{{user}}'s Profile Page</h1>
-
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">{{user}}'s Profile Page</h1>
 
     <div class="grid grid-cols-3 gap-x-4 mx-6">
-        <div class="bg-gray-400 my-4 p-4">
-           <h2 class="font-semibold uppercase"> Username: {{user}}</h2>
-        </div>
-        <div class="bg-gray-400 my-4 p-4">
-           <h2 class="font-semibold uppercase"> Your Balance: ${{money}}</h2>
-        </div>
-
-        <div class="bg-gray-400 my-4 p-4">
-            <h2 class="font-semibold uppercase"> Food Stock: {{food}}</h2>
-        </div>
+      <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
+        <h2 class="font-semibold uppercase text-gray-800">Username: {{user}}</h2>
+      </div>
+      <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
+        <h2 class="font-semibold uppercase text-gray-800">Balance: ${{money}}</h2>
+      </div>
+      <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
+        <h2 class="font-semibold uppercase text-gray-800">Food Stock: {{food}}</h2>
+      </div>
     </div>
 
-    <div class="bg-gray-400 my-4 p-4 mx-6">
-        <h2 class="font-semibold uppercase"> History of Rescues:</h2>
+    <div class="bg-white/80 rounded-2xl my-4 p-4 mx-6 shadow">
+      <h2 class="font-semibold uppercase text-gray-800">History of Rescues:</h2>
     </div>
 
-    <div class="bg-gray-400 mx-6 my-4">
-        <table class="w-full table-fixed border-separate border-spacing-x-4">
-            {{table|safe}}
-        </table>
+    <div class="bg-white/80 rounded-2xl mx-6 my-4 shadow">
+      <table class="w-full table-fixed border-separate border-spacing-x-4">
+        {{table|safe}}
+      </table>
     </div>
 
   </body>
