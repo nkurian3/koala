@@ -25,44 +25,49 @@
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
     <!--NAV BAR-->
-    <nav class="">
-      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-        <a class="flex items-center" href="/">
-          <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
+    <nav>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
         </a>
-        <div class="p-5 flex flex-row justify-end space-x-4">
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards">Rewards</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
-          <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨</a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/profile">Profile</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/rewards">Rewards</a>
+          <a class="font-semibold rounded-xl bg-white text-gray-800 py-2 px-4 text-sm" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
+          <a class="font-bold rounded-xl text-white py-2 px-4 text-sm shadow-lg transition hover:opacity-90" href="/customize" style="background-color: {{theme_color}};">🎨</a>
         </div>
       </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">Catch the Animals!</h1>
+    <!-- Page header -->
+    <div class="text-center pt-10 pb-2 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">The Wild</h1>
+      <p class="text-white/80 mt-1 text-sm font-medium">Click an animal to rescue it!</p>
+    </div>
 
-    <div class="pops flex">
-      <div class="pop" id="p">
-        <span id="close">&times;</span>
-        <h1 id="pop-name"></h1><br>
-        <p>
-          Species: <span id="pop-species"></span><br>
-          Health: <span id="pop-health"></span>
-          <br>
-          <form method="POST" action="/wild">
-            <input type="hidden" name="name" id="input-name">
-            <input type="hidden" name="species" id="input-species">
-            <input type="hidden" name="health" id="input-health">
-            <input type="hidden" name="action" value="rescue">
-            {% if space %}
-              <button value="1" name="newL" id="rescue" type="submit"
-                class="font-semibold rounded-lg text-white py-3 px-5 shadow-md mt-2"
-                style="background-color: {{theme_color}};">Rescue Animal</button>
-            {% endif %}
-          </form>
-        </p>
+    <!-- Animal info popup -->
+    <div class="pops">
+      <div class="pop" id="p" style="display:none;">
+        <button id="close" style="position:absolute; right:12px; top:10px; font-size:18px; cursor:pointer; color:#9ca3af; background:none; border:none; line-height:1;">&times;</button>
+        <p style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:2px;">Animal Found</p>
+        <div style="font-size:1.15rem; font-weight:800; color:#1f2937; margin-bottom:8px;" id="pop-name"></div>
+        <div style="font-size:0.78rem; color:#6b7280; margin-bottom:2px;">Species: <span id="pop-species" style="font-weight:600; color:#374151;"></span></div>
+        <div style="font-size:0.78rem; color:#6b7280; margin-bottom:14px;">Condition: <span id="pop-health" style="font-weight:600; color:#374151;"></span></div>
+        <form method="POST" action="/wild">
+          <input type="hidden" name="name" id="input-name">
+          <input type="hidden" name="species" id="input-species">
+          <input type="hidden" name="health" id="input-health">
+          <input type="hidden" name="action" value="rescue">
+          {% if space %}
+            <button value="1" name="newL" id="rescue" type="submit"
+              style="background-color: {{theme_color}}; color:white; font-weight:700; border-radius:12px; padding:8px 20px; font-size:0.85rem; border:none; cursor:pointer; width:100%;">
+              🐾 Rescue Animal
+            </button>
+          {% endif %}
+        </form>
       </div>
     </div>
 

@@ -47,26 +47,17 @@ for (let i = 0; i < buttons.length; i++) {
     buttons[i].onclick = function() {
         pops.style.display = "block";
 
-        n.textContent = "Meet, " + this.dataset.name + "!";
+        n.textContent = this.dataset.name;
         s.textContent = this.dataset.species;
-        if (this.dataset.health === 'sick'){
-            h.textContent = this.dataset.health;
-        }
-        else{
-            h.textContent = 'healthy'
-        }
-
+        h.textContent = this.dataset.health === 'sick' ? 'Injured' : 'Healthy';
 
         ina.value = this.dataset.name;
         is.value = this.dataset.species;
         ih.value = this.dataset.health;
 
-        if (this.dataset.health === "sick") {
-            rescue.style.display = "inline-block";
-          } else {
-            rescue.style.display = "none";
-          }
-      
+        if (rescue) {
+            rescue.style.display = "block";
+        }
     }
 }
 

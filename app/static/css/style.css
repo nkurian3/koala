@@ -78,15 +78,18 @@ html, body {
 
 
 .pop {
-  position: relative;
-  display: none;
-  z-index: 1;
-  overflow: auto;
-  width: 50vw;
-  height: 25vh;
-  text-align: center;
-  background-color: #86eabb;
-
+  position: fixed;
+  z-index: 1000;
+  bottom: 24px;
+  left: 24px;
+  width: 280px;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  color: #1f2937;
 }
 
 .frame {

@@ -54,34 +54,43 @@
   </head>
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}'); --theme: {{theme_color}};">
     <nav>
-      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-        <a class="flex items-center" href="/"><img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded"></a>
-        <div class="p-5 flex flex-row justify-end space-x-4">
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
-          <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
+        </a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/profile">Profile</a>
+          <a class="font-semibold rounded-xl bg-white text-gray-800 py-2 px-4 text-sm" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
         </div>
       </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">🐾 Animal Wordle — Win $50!</h1>
+    <div class="text-center pt-8 pb-2 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">🐾 Animal Wordle</h1>
+      <p class="text-white/80 mt-1 text-sm font-medium">Guess the word — win $50</p>
+    </div>
 
     <div class="flex flex-col items-center mt-4 gap-4">
       <!-- Balance -->
-      <div class="bg-white/80 rounded-2xl px-6 py-3 flex items-center gap-2 shadow">
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-3 flex items-center gap-3 shadow-xl">
         <span class="text-2xl">💰</span>
-        <h2 class="font-bold text-gray-800 text-lg">Balance: $<span id="balance-display">{{money}}</span></h2>
+        <div>
+          <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Balance</p>
+          <p class="text-xl font-extrabold text-gray-800">$<span id="balance-display">{{money}}</span></p>
+        </div>
       </div>
 
       {% if already_played %}
         <!-- Already played today -->
-        <div class="bg-white/90 rounded-3xl shadow-xl p-10 flex flex-col items-center gap-4 mt-4">
+        <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 flex flex-col items-center gap-4 mt-4 max-w-sm w-full">
           <div class="text-6xl">🌙</div>
-          <h2 class="text-2xl font-bold text-gray-800">Come back tomorrow!</h2>
-          <p class="text-gray-500 text-center">You've already played today's Animal Wordle.<br>A new word is waiting for you tomorrow.</p>
-          <a href="/rewards" class="font-semibold text-white rounded-xl px-6 py-3 mt-2" style="background-color: {{theme_color}};">← Back to Rewards</a>
+          <h2 class="text-2xl font-extrabold text-gray-800">Come back tomorrow!</h2>
+          <p class="text-gray-500 text-center text-sm">You've already played today's Animal Wordle.<br>A new word is waiting for you tomorrow.</p>
+          <a href="/rewards" class="font-bold text-white rounded-xl px-6 py-3 mt-2 shadow-lg hover:opacity-90 transition" style="background-color: {{theme_color}};">← Back to Rewards</a>
         </div>
       {% else %}
         <!-- Game board -->

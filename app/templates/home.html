@@ -23,52 +23,75 @@
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
     <!--NAV BAR-->
-    <nav class="">
-        <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-            <a class="flex items-center" href="/">
-                <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
-            </a>
-            <div class="p-5 flex flex-row justify-end space-x-4">
-                <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
-                <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
-                <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards">Rewards</a>
-                <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
-                <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
-                <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨 Customize</a>
-            </div>
+    <nav>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
+        </a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/profile">Profile</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
+          <a class="font-bold rounded-xl text-white py-2 px-4 text-sm shadow-lg transition hover:opacity-90" href="/customize" style="background-color: {{theme_color}};">🎨 Customize</a>
         </div>
+      </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">Explore Your Enclosures!</h1>
+    <!-- Page header -->
+    <div class="text-center pt-10 pb-4 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">Your Enclosures</h1>
+      <p class="text-white/80 mt-1 text-sm font-medium">Rescue, feed, and care for your animals</p>
+    </div>
 
-    <div class="grid grid-cols-2 gap-x-4 mx-6">
-        <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
-           <h2 class="font-semibold uppercase text-gray-800">Your Balance: ${{money}}</h2>
-            <form id="ff" action="/" method="POST">
-                <input type="hidden" name="action" value="buyingE">
-                <button id="buye" class="font-semibold rounded-lg text-white py-3 px-5 my-2 shadow" style="background-color: {{theme_color}};">Buy Enclosure: $50</button>
-            </form>
+    <!-- Stats + Actions row -->
+    <div class="grid grid-cols-2 gap-4 mx-6 mt-2 max-w-2xl mx-auto">
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-xl flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">💰</span>
+          <div>
+            <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Balance</p>
+            <p class="text-xl font-extrabold text-gray-800">${{money}}</p>
+          </div>
         </div>
+        <form id="ff" action="/" method="POST">
+          <input type="hidden" name="action" value="buyingE">
+          <button id="buye" class="w-full font-bold rounded-xl text-white py-2 px-4 text-sm shadow transition hover:opacity-90" style="background-color: {{theme_color}};">
+            + Buy Enclosure — $50
+          </button>
+        </form>
+      </div>
 
-        <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
-            <h2 class="font-semibold uppercase text-gray-800">Food Stock: {{food}}</h2>
-            <form id="f" action="/" method="POST">
-                <input type="hidden" name="action" value="buyingF">
-                <button id="buyf" class="font-semibold rounded-lg text-white py-3 px-5 my-2 shadow" style="background-color: {{theme_color}};">Buy Food: $10</button>
-            </form>
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-xl flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🍃</span>
+          <div>
+            <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Food Stock</p>
+            <p class="text-xl font-extrabold text-gray-800">{{food}}</p>
+          </div>
         </div>
+        <form id="f" action="/" method="POST">
+          <input type="hidden" name="action" value="buyingF">
+          <button id="buyf" class="w-full font-bold rounded-xl text-white py-2 px-4 text-sm shadow transition hover:opacity-90" style="background-color: {{theme_color}};">
+            + Buy Food — $10
+          </button>
+        </form>
+      </div>
     </div>
 
     {% if error %}
-        <div class="bg-white/80 rounded-2xl mx-6 p-4 text-red-600 font-semibold shadow" role="alert">
-        {{ error | safe }}
-        </div>
+    <div class="bg-red-50/90 border border-red-200 rounded-2xl mx-6 mt-4 p-4 text-red-600 font-semibold text-sm shadow max-w-2xl mx-auto" role="alert">
+      {{ error | safe }}
+    </div>
     {% endif %}
 
-    <div class="bg-white/80 rounded-2xl mx-6 my-4 shadow">
-        <table class="w-full table-fixed border-separate border-spacing-x-4">
-            {{table|safe}}
-        </table>
+    <!-- Enclosures table -->
+    <div class="bg-white/90 backdrop-blur-sm rounded-2xl mx-6 mt-4 mb-8 shadow-xl overflow-hidden max-w-4xl mx-auto">
+      <table class="w-full table-fixed border-separate border-spacing-x-4">
+        {{table|safe}}
+      </table>
     </div>
 
   </body>

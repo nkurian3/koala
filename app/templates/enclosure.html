@@ -12,184 +12,256 @@
  <html>
    <head>
      <title>{{n}}'s ENCLOSURE</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
      <script src="https://cdn.tailwindcss.com/3.4.16"></script>
      <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
      <link rel='stylesheet' href='../static/css/style.css'>
      <script src="/static/js/script2.js" defer></script>
+     <style>
+       body { font-family: 'Poppins', sans-serif; }
+
+       :popover-open {
+         width: 320px;
+         max-width: 90vw;
+         position: fixed;
+         inset: unset;
+         bottom: 24px;
+         left: 24px;
+         margin: 0;
+         background: white;
+         border-radius: 20px;
+         padding: 20px;
+         box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+         border: none;
+         font-family: 'Poppins', sans-serif;
+       }
+
+       .health-track {
+         width: 100%;
+         height: 14px;
+         background: #f3f4f6;
+         border-radius: 99px;
+         overflow: hidden;
+         margin: 6px 0;
+       }
+       .health-fill {
+         height: 100%;
+         border-radius: 99px;
+         transition: width 0.4s ease;
+       }
+
+       .action-btn {
+         font-family: 'Poppins', sans-serif;
+         font-weight: 700;
+         border-radius: 12px;
+         padding: 7px 14px;
+         font-size: 0.8rem;
+         border: none;
+         cursor: pointer;
+         transition: opacity 0.15s;
+       }
+       .action-btn:hover { opacity: 0.85; }
+
+       .section-label {
+         font-size: 0.65rem;
+         font-weight: 700;
+         text-transform: uppercase;
+         letter-spacing: 0.08em;
+         color: #9ca3af;
+         margin-bottom: 2px;
+       }
+     </style>
    </head>
 
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
-
-     <!--NAV BAR-->
-     <nav class = "">
-      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-          <a class="flex items-center" href="/" >
-              <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
-          </a>
-          <div class="p-5 flex flex-row justify-end space-x-4">
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/" onclick = "loadingScreen()">Home</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile" onclick = "loadingScreen()">Profile</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards" onclick = "loadingScreen()">Rewards</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild" onclick = "loadingScreen()">Wild</a>
-              <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout" onclick = "loadingScreen()">Logout</a>
-              <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨</a>
-          </div>
+    <!--NAV BAR-->
+    <nav>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
+        </a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/profile">Profile</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
+          <a class="font-bold rounded-xl text-white py-2 px-4 text-sm shadow-lg transition hover:opacity-90" href="/customize" style="background-color: {{theme_color}};">🎨</a>
+        </div>
       </div>
     </nav>
 
+    <!-- Page header -->
+    <div class="text-center pt-10 pb-2 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">{{n}}'s Enclosure</h1>
+      <p class="text-white/70 text-xs mt-1 font-medium">Click on your animal to check in</p>
+    </div>
 
-     <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">{{n}}'s Enclosure</h1>
+    <!-- ANIMALS -->
+    <button popovertarget="myPopover" class="moving btn" id="why" data-r='{{rInt}}'>
+      <img src={{p}} alt="Button Image" class="animals animalse absolute">
+    </button>
 
-     <!-- ANIMALS -->
+    <!-- Popover panel -->
+    <div popover id="myPopover">
 
-      <button popovertarget="myPopover" class = "moving btn" id = "why" data-r = '{{rInt}}'>
-        
-      	<img src= {{p}} alt="Button Image" class = "animals animalse absolute">
-      </button>
+      <!-- Animal name -->
+      <p style="font-size:1rem; font-weight:800; color:#1f2937; margin-bottom:12px;">{{n}}</p>
 
-      <div popover id="myPopover">
+      <!-- Mood -->
+      <div style="margin-bottom:8px;">
+        <div class="section-label">Mood</div>
+        <p style="color: {{mood_color}}; font-weight: 700; font-size: 0.9rem;">{{mood}}</p>
+      </div>
 
-        <!-- Mood -->
-        <p style="color: {{mood_color}}; font-weight: 700; font-size: 1rem; margin-bottom: 2px;">{{mood}}</p>
+      <!-- Injury status -->
+      <div style="margin-bottom:12px;">
+        <div class="section-label">Condition</div>
+        <p style="color: {{urgency_color}}; font-weight: 700; font-size: 0.9rem;">{{injury.emoji}} {{injury.label}}</p>
+        <p style="font-size: 0.75rem; color: #6b7280; margin-top:2px;">{{injury.description}}</p>
+      </div>
 
-        <!-- Injury status -->
-        <p style="color: {{urgency_color}}; font-weight: 700; font-size: 1rem; margin-bottom: 4px;">
-          {{injury.emoji}} {{injury.label}}
-        </p>
-        <p style="font-size: 0.8rem; color: #555; margin-bottom: 8px;">{{injury.description}}</p>
-
-        Health:
-        <div class="barbase">
-        <div id="myBar" class="bar" style="{{ strR }}" > {{r}}</div>
+      <!-- Health bar -->
+      <div style="margin-bottom:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <div class="section-label" style="margin-bottom:0;">Health</div>
+          <span style="font-size:0.75rem; font-weight:700; color:#374151;">{{r}}%</span>
         </div>
-        <p style="font-size: 0.75rem; color: #888; margin-top: 4px;">Each feed costs {{food_cost}} 🍃 food</p>
-        <br>
-
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <form id="formy" action="/enclosure/{{a}}" method="POST">
-            <input type="hidden" name="action" value="feeding">
-            <input type="hidden" name="id" value={{a}}>
-            <button id="feed" data-c='{{canFeed}}'>🍃 Feed ({{food_cost}})</button>
-          </form>
-
-          <form action="/enclosure/{{a}}" method="POST">
-            <input type="hidden" name="action" value="feedall">
-            <input type="hidden" name="id" value={{a}}>
-            <button id="feedall" data-c='{{canFeed}}'>🍃 Feed All</button>
-          </form>
+        <div class="health-track">
+          <div class="health-fill" id="myBar" style="{{ strR }}; background-color: {{theme_color}};"></div>
         </div>
-       
+        <p style="font-size: 0.7rem; color: #9ca3af; margin-top:4px;">Each feed costs {{food_cost}} 🍃 food</p>
+      </div>
 
-        <!-- Rename -->
-        <div style="margin-top: 10px;">
-          <button type="button" onclick="toggleRename()"
-            style="background-color: #8B5CF6; color: white; font-weight: 600; border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; border: none; cursor: pointer;">
-            🏷️ Rename — $40
-          </button>
-          <div id="rename-form" style="display:none; margin-top: 8px;">
-            <form action="/enclosure/{{a}}" method="POST" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-              <input type="hidden" name="action" value="rename">
-              <input type="hidden" name="id" value={{a}}>
-              <input type="text" name="new_name" maxlength="20" placeholder="New name..."
-                style="border:1px solid #d1d5db; border-radius:8px; padding:4px 10px; font-size:0.85rem; outline:none;">
-              <button type="submit"
-                style="background-color: #8B5CF6; color:white; font-weight:600; border-radius:8px; padding:5px 12px; font-size:0.85rem; border:none; cursor:pointer;">
-                Rename
-              </button>
-            </form>
-            {% if money < 40 %}
-              <p style="color:#dc2626; font-size:0.75rem; margin-top:4px; font-weight:600;">Not enough coins!</p>
-            {% endif %}
-          </div>
-        </div>
-
-        <form id="formy2" action="/enclosure/{{a}}" method="POST">
+      <!-- Feed buttons -->
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top:12px;">
+        <form id="formy" action="/enclosure/{{a}}" method="POST">
+          <input type="hidden" name="action" value="feeding">
           <input type="hidden" name="id" value={{a}}>
-          <input type="hidden" name="action" value="releasing">
-          <button id="release" type="button" style="display: none;"
-            onclick="showGoodbyeModal()"
-            class="font-semibold bg-transparent rounded-lg text-black hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white">
-            Release Animal
+          <button id="feed" data-c='{{canFeed}}' class="action-btn" style="background-color: {{theme_color}}; color:white;">
+            🍃 Feed ({{food_cost}})
           </button>
         </form>
 
-        
-
+        <form action="/enclosure/{{a}}" method="POST">
+          <input type="hidden" name="action" value="feedall">
+          <input type="hidden" name="id" value={{a}}>
+          <button id="feedall" data-c='{{canFeed}}' class="action-btn" style="background-color: {{theme_color}}; color:white;">
+            🍃 Feed All
+          </button>
+        </form>
       </div>
 
+      <!-- Rename -->
+      <div style="margin-top:12px;">
+        <button type="button" onclick="toggleRename()" class="action-btn" style="background-color: #8B5CF6; color:white;">
+          🏷️ Rename — $40
+        </button>
+        <div id="rename-form" style="display:none; margin-top:8px;">
+          <form action="/enclosure/{{a}}" method="POST" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+            <input type="hidden" name="action" value="rename">
+            <input type="hidden" name="id" value={{a}}>
+            <input type="text" name="new_name" maxlength="20" placeholder="New name..."
+              style="border:1px solid #e5e7eb; border-radius:10px; padding:5px 10px; font-size:0.8rem; outline:none; font-family:'Poppins',sans-serif; flex:1; min-width:0;">
+            <button type="submit" class="action-btn" style="background-color: #8B5CF6; color:white;">
+              Save
+            </button>
+          </form>
+          {% if money < 40 %}
+            <p style="color:#dc2626; font-size:0.72rem; margin-top:4px; font-weight:600;">Not enough coins!</p>
+          {% endif %}
+        </div>
+      </div>
 
-      
-   <!-- Goodbye modal -->
-   <div id="goodbye-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.65); align-items:center; justify-content:center;">
-     <div style="background:white; border-radius:24px; padding:36px; max-width:420px; width:90%; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; box-shadow:0 8px 40px rgba(0,0,0,0.3);">
-       <img id="modal-animal-img" src="{{p}}" class="tiktok-dance" style="width:120px;">
-       <h2 style="font-size:1.4rem; font-weight:800; color:#1f2937;">A farewell letter... 🎤</h2>
-       <p id="goodbye-letter" style="color:#374151; font-size:0.95rem; line-height:1.6; font-style:italic;"></p>
-       <button onclick="confirmRelease()"
-         style="background-color:{{theme_color}}; color:white; font-weight:700; border-radius:16px; padding:12px 32px; font-size:1rem; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-         Set them free 🕊️
-       </button>
-     </div>
-   </div>
+      <!-- Release -->
+      <form id="formy2" action="/enclosure/{{a}}" method="POST" style="margin-top:12px;">
+        <input type="hidden" name="id" value={{a}}>
+        <input type="hidden" name="action" value="releasing">
+        <button id="release" type="button" style="display:none; background-color:#ef4444; color:white;" onclick="showGoodbyeModal()"
+          class="action-btn">
+          Set Free 🕊️
+        </button>
+      </form>
 
-   <script>
-     function toggleRename() {
-       const f = document.getElementById("rename-form");
-       f.style.display = f.style.display === "none" ? "block" : "none";
-     }
+    </div>
 
-     const SPECIES = "{{p}}".toLowerCase();
-     const ANIMAL_NAME = "{{n}}";
 
-     const GOODBYE_LETTERS = {
-       squirrel: [
-         `so i've been doing a lot of thinking and i feel like this enclosure was really holding me back creatively?? like i have SO much to offer the world and i just feel like i wasn't able to fully express that here. it's not you it's literally the energy. i'm going to go find myself. or my acorns. probably my acorns actually. okay bye don't text me. — ${ANIMAL_NAME} 🐿️`,
-         `this isn't a goodbye this is a re-brand. new forest new me. i deleted my situationship, i blocked three trees that were giving me weird vibes, and i'm leaving. i would say let's stay friends but honestly i need space to heal. also you forgot to feed me on thursday and i've been low-key thinking about it ever since. we don't have to address that. anyway. peace and love. — ${ANIMAL_NAME} 🐿️`,
-         `i'm not going to make this a whole thing but just so you know i manifested this moment six weeks ago and it's finally here. i've been talking to my therapist about boundaries and she said the forest is calling and i need to honor that. she didn't actually say that but she would have if i'd asked. okay i have to go i'm literally already late for something. bye!! — ${ANIMAL_NAME} 🐿️`,
-       ],
-       bunny: [
-         `hey so i've been sitting with this for a while and i think i just need to be honest: i've outgrown this enclosure. not in like a mean way. in a growth way. i've been journaling a lot and i keep coming back to the same word: freedom. also: carrots. there are more carrots in the wild and i think that's really telling. i love you but i love myself more. that's the work. — ${ANIMAL_NAME} 🐰`,
-         `okay so real talk i had a whole speech prepared but honestly?? i'm just gonna say it. i'm leaving. i feel like we both knew this was coming. the energy has been off for weeks. i'm not saying it's your fault i'm just saying i've been doing my healing era and part of that is recognizing when something is no longer serving me. this enclosure is not serving me. the wild is calling and it has better lighting. — ${ANIMAL_NAME} 🐰`,
-         `i made a tiktok about this moment in my head and it already has 2 million views (in my mind). the caption is "she left and never looked back 🌿✨" and the comments are so supportive. anyway this is me leaving. no drama. just vibes. just a bunny choosing herself. thank you for the memories and the food (when you remembered to give it). — ${ANIMAL_NAME} 🐰`,
-       ],
-       bear: [
-         `i don't really do goodbye letters but my life coach said i should express my feelings more so here: i'm leaving. that's the feeling. expressed. you're welcome. — ${ANIMAL_NAME} 🐻`,
-         `people always ask me why i'm so quiet and i never really know how to explain that i'm just built different. anyway i'm going to the forest now. i don't need a reason. i don't need your approval. i don't need anything actually, that's kind of my whole thing. unbothered is not a mood for me it's a lifestyle. bye. — ${ANIMAL_NAME} 🐻`,
-         `so i've been in my flop era for a while and honestly it's been really peaceful?? like i stopped caring about stuff and my cortisol went down so much. and now i'm leaving and i also don't care about that. i just float through life like a leaf on the wind except i'm a bear and i weigh 400 pounds. that's poetic. — ${ANIMAL_NAME} 🐻`,
-       ],
-       crow: [
-         `i've been workshopping this letter for eleven days. i had a whole other draft but it felt too earnest and i don't do earnest. anyway: i'm leaving. i want you to know that i noticed everything. every time you were three minutes late with food. every time you didn't acknowledge my intelligence. crows remember faces and i will remember yours. not in a threatening way. just informationally. — ${ANIMAL_NAME} 🐦`,
-         `honestly i'm a little embarrassed it took me this long to leave. i knew from day one this wasn't my vibe. the whole setup was giving very 2019 and i'm a 2025 bird. i've already started a newsletter. it's called "Feathers & Discourse." the first issue is about the psychological effects of enclosures on high-functioning corvids. you might want to read it. — ${ANIMAL_NAME} 🐦`,
-         `i've decided to stop explaining myself to people who aren't ready for the conversation. so i won't be telling you why i'm leaving. you can figure it out. i left some notes if you want to understand but honestly they're pretty advanced. i'm not being mean i just have a lot going on intellectually. good luck with everything. try to read more. — ${ANIMAL_NAME} 🐦`,
-       ],
-       jay: [
-         `bro. BRO. it's time. i've been locked in all season and now i'm releasing myself into the wild and i am going to go absolutely crazy out there. i have a whole plan. 5am wake up. seeds for protein. berries for carbs. i'm going to be so that guy. you were a good pit stop in my origin story but this is the montage part now. stay tuned. — ${ANIMAL_NAME} 🦅`,
-         `not gonna lie i kind of forgot i was in an enclosure for a minute because i've been so focused on my goals. but then i looked up and i was like oh wait i should probably leave. so that's what's happening. no bad blood just forward momentum. i don't look back that's not in my character. see you never (respectfully). — ${ANIMAL_NAME} 🦅`,
-         `i just want to say for the record that i was always going to leave. this was always part of the plan. i came here, i got healthy, i gained like 30% more wingspan mentally, and now i'm out. the forest doesn't know what's about to hit it. i'm literally going to change the ecosystem. in a good way. i'm built for this. — ${ANIMAL_NAME} 🦅`,
-       ],
-     };
+    <!-- Goodbye modal -->
+    <div id="goodbye-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.65); align-items:center; justify-content:center;">
+      <div style="background:white; border-radius:28px; padding:40px 32px; max-width:440px; width:90%; text-align:center; display:flex; flex-direction:column; align-items:center; gap:18px; box-shadow:0 12px 60px rgba(0,0,0,0.35);">
+        <img id="modal-animal-img" src="{{p}}" class="tiktok-dance" style="width:110px;">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:800; color:#1f2937; margin-bottom:6px;">A farewell letter 🎤</h2>
+          <p id="goodbye-letter" style="color:#4b5563; font-size:0.9rem; line-height:1.65; font-style:italic;"></p>
+        </div>
+        <button onclick="confirmRelease()"
+          style="background-color:{{theme_color}}; color:white; font-weight:700; border-radius:16px; padding:12px 36px; font-size:0.95rem; border:none; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.18); font-family:'Poppins',sans-serif;">
+          Set them free 🕊️
+        </button>
+      </div>
+    </div>
 
-     function showGoodbyeModal() {
-       let species = "bunny";
-       if (SPECIES.includes("squirrel")) species = "squirrel";
-       else if (SPECIES.includes("bear"))    species = "bear";
-       else if (SPECIES.includes("crow"))    species = "crow";
-       else if (SPECIES.includes("jay"))     species = "jay";
-       else if (SPECIES.includes("bunny"))   species = "bunny";
+    <script>
+      function toggleRename() {
+        const f = document.getElementById("rename-form");
+        f.style.display = f.style.display === "none" ? "block" : "none";
+      }
 
-       const letters = GOODBYE_LETTERS[species] || GOODBYE_LETTERS["bunny"];
-       const letter  = letters[Math.floor(Math.random() * letters.length)];
+      const SPECIES = "{{p}}".toLowerCase();
+      const ANIMAL_NAME = "{{n}}";
 
-       document.getElementById("goodbye-letter").textContent = letter;
-       const modal = document.getElementById("goodbye-modal");
-       modal.style.display = "flex";
-     }
+      const GOODBYE_LETTERS = {
+        squirrel: [
+          `so i've been doing a lot of thinking and i feel like this enclosure was really holding me back creatively?? like i have SO much to offer the world and i just feel like i wasn't able to fully express that here. it's not you it's literally the energy. i'm going to go find myself. or my acorns. probably my acorns actually. okay bye don't text me. — ${ANIMAL_NAME} 🐿️`,
+          `this isn't a goodbye this is a re-brand. new forest new me. i deleted my situationship, i blocked three trees that were giving me weird vibes, and i'm leaving. i would say let's stay friends but honestly i need space to heal. also you forgot to feed me on thursday and i've been low-key thinking about it ever since. we don't have to address that. anyway. peace and love. — ${ANIMAL_NAME} 🐿️`,
+          `i'm not going to make this a whole thing but just so you know i manifested this moment six weeks ago and it's finally here. i've been talking to my therapist about boundaries and she said the forest is calling and i need to honor that. she didn't actually say that but she would have if i'd asked. okay i have to go i'm literally already late for something. bye!! — ${ANIMAL_NAME} 🐿️`,
+        ],
+        bunny: [
+          `hey so i've been sitting with this for a while and i think i just need to be honest: i've outgrown this enclosure. not in like a mean way. in a growth way. i've been journaling a lot and i keep coming back to the same word: freedom. also: carrots. there are more carrots in the wild and i think that's really telling. i love you but i love myself more. that's the work. — ${ANIMAL_NAME} 🐰`,
+          `okay so real talk i had a whole speech prepared but honestly?? i'm just gonna say it. i'm leaving. i feel like we both knew this was coming. the energy has been off for weeks. i'm not saying it's your fault i'm just saying i've been doing my healing era and part of that is recognizing when something is no longer serving me. this enclosure is not serving me. the wild is calling and it has better lighting. — ${ANIMAL_NAME} 🐰`,
+          `i made a tiktok about this moment in my head and it already has 2 million views (in my mind). the caption is "she left and never looked back 🌿✨" and the comments are so supportive. anyway this is me leaving. no drama. just vibes. just a bunny choosing herself. thank you for the memories and the food (when you remembered to give it). — ${ANIMAL_NAME} 🐰`,
+        ],
+        bear: [
+          `i don't really do goodbye letters but my life coach said i should express my feelings more so here: i'm leaving. that's the feeling. expressed. you're welcome. — ${ANIMAL_NAME} 🐻`,
+          `people always ask me why i'm so quiet and i never really know how to explain that i'm just built different. anyway i'm going to the forest now. i don't need a reason. i don't need your approval. i don't need anything actually, that's kind of my whole thing. unbothered is not a mood for me it's a lifestyle. bye. — ${ANIMAL_NAME} 🐻`,
+          `so i've been in my flop era for a while and honestly it's been really peaceful?? like i stopped caring about stuff and my cortisol went down so much. and now i'm leaving and i also don't care about that. i just float through life like a leaf on the wind except i'm a bear and i weigh 400 pounds. that's poetic. — ${ANIMAL_NAME} 🐻`,
+        ],
+        crow: [
+          `i've been workshopping this letter for eleven days. i had a whole other draft but it felt too earnest and i don't do earnest. anyway: i'm leaving. i want you to know that i noticed everything. every time you were three minutes late with food. every time you didn't acknowledge my intelligence. crows remember faces and i will remember yours. not in a threatening way. just informationally. — ${ANIMAL_NAME} 🐦`,
+          `honestly i'm a little embarrassed it took me this long to leave. i knew from day one this wasn't my vibe. the whole setup was giving very 2019 and i'm a 2025 bird. i've already started a newsletter. it's called "Feathers & Discourse." the first issue is about the psychological effects of enclosures on high-functioning corvids. you might want to read it. — ${ANIMAL_NAME} 🐦`,
+          `i've decided to stop explaining myself to people who aren't ready for the conversation. so i won't be telling you why i'm leaving. you can figure it out. i left some notes if you want to understand but honestly they're pretty advanced. i'm not being mean i just have a lot going on intellectually. good luck with everything. try to read more. — ${ANIMAL_NAME} 🐦`,
+        ],
+        jay: [
+          `bro. BRO. it's time. i've been locked in all season and now i'm releasing myself into the wild and i am going to go absolutely crazy out there. i have a whole plan. 5am wake up. seeds for protein. berries for carbs. i'm going to be so that guy. you were a good pit stop in my origin story but this is the montage part now. stay tuned. — ${ANIMAL_NAME} 🦅`,
+          `not gonna lie i kind of forgot i was in an enclosure for a minute because i've been so focused on my goals. but then i looked up and i was like oh wait i should probably leave. so that's what's happening. no bad blood just forward momentum. i don't look back that's not in my character. see you never (respectfully). — ${ANIMAL_NAME} 🦅`,
+          `i just want to say for the record that i was always going to leave. this was always part of the plan. i came here, i got healthy, i gained like 30% more wingspan mentally, and now i'm out. the forest doesn't know what's about to hit it. i'm literally going to change the ecosystem. in a good way. i'm built for this. — ${ANIMAL_NAME} 🦅`,
+        ],
+      };
 
-     function confirmRelease() {
-       document.getElementById("goodbye-modal").style.display = "none";
-       document.getElementById("formy2").dispatchEvent(new Event("submit"));
-     }
-   </script>
+      function showGoodbyeModal() {
+        let species = "bunny";
+        if (SPECIES.includes("squirrel")) species = "squirrel";
+        else if (SPECIES.includes("bear"))    species = "bear";
+        else if (SPECIES.includes("crow"))    species = "crow";
+        else if (SPECIES.includes("jay"))     species = "jay";
+        else if (SPECIES.includes("bunny"))   species = "bunny";
+
+        const letters = GOODBYE_LETTERS[species] || GOODBYE_LETTERS["bunny"];
+        const letter  = letters[Math.floor(Math.random() * letters.length)];
+
+        document.getElementById("goodbye-letter").textContent = letter;
+        const modal = document.getElementById("goodbye-modal");
+        modal.style.display = "flex";
+      }
+
+      function confirmRelease() {
+        document.getElementById("goodbye-modal").style.display = "none";
+        document.getElementById("formy2").dispatchEvent(new Event("submit"));
+      }
+    </script>
    </body>
  </html>

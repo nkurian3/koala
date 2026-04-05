@@ -23,67 +23,79 @@
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
     <!--NAV BAR-->
-    <nav class="">
-      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-        <a class="flex items-center" href="/">
-          <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
+    <nav>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
         </a>
-        <div class="p-5 flex flex-row justify-end space-x-4">
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
-          <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
-          <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨</a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/profile">Profile</a>
+          <a class="font-semibold rounded-xl bg-white text-gray-800 py-2 px-4 text-sm" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
+          <a class="font-bold rounded-xl text-white py-2 px-4 text-sm shadow-lg transition hover:opacity-90" href="/customize" style="background-color: {{theme_color}};">🎨</a>
         </div>
       </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">Earn Coins!</h1>
-
-    <div class="bg-white/80 rounded-2xl px-6 py-3 mx-6 mt-4 flex items-center gap-2 shadow">
-      <span class="text-2xl">💰</span>
-      <h2 class="font-bold text-gray-800 text-lg">Balance: ${{money}}</h2>
+    <!-- Page header -->
+    <div class="text-center pt-10 pb-4 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">Earn Coins</h1>
+      <p class="text-white/80 mt-1 text-sm font-medium">Play games to fund your rescue missions</p>
     </div>
 
-    <div class="grid grid-cols-2 gap-6 mx-6 mt-6 pb-8">
+    <!-- Balance -->
+    <div class="flex justify-center mb-6">
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-3 flex items-center gap-3 shadow-xl">
+        <span class="text-2xl">💰</span>
+        <div>
+          <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Your Balance</p>
+          <p class="text-xl font-extrabold text-gray-800">${{money}}</p>
+        </div>
+      </div>
+    </div>
 
-      <!-- Trivia — Easy -->
-      <a href="/trivia" class="bg-white/90 rounded-3xl shadow-xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform duration-150">
-        <div class="text-5xl text-center">🧠</div>
-        <h2 class="text-xl font-bold text-center text-gray-800">Trivia</h2>
-        <p class="text-gray-500 text-center text-sm">Answer animal questions correctly</p>
-        <div class="text-center font-bold text-lg text-green-600">$30 per correct answer</div>
-        <div class="text-center text-xs text-gray-400">Unlimited plays</div>
+    <!-- Game cards -->
+    <div class="grid grid-cols-2 gap-5 mx-6 pb-10 max-w-3xl mx-auto">
+
+      <!-- Trivia -->
+      <a href="/trivia" class="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 flex flex-col items-center gap-3 hover:scale-[1.03] hover:shadow-2xl transition-all duration-150">
+        <div class="text-6xl">🧠</div>
+        <h2 class="text-lg font-extrabold text-gray-800 uppercase tracking-wide">Trivia</h2>
+        <p class="text-gray-500 text-center text-xs leading-relaxed">Answer animal questions correctly</p>
+        <div class="mt-auto w-full text-center font-bold text-sm text-white rounded-xl py-2 px-4" style="background-color: {{theme_color}};">$30 per correct answer</div>
+        <div class="text-xs text-gray-400">Unlimited plays</div>
       </a>
 
-      <!-- Wordle, once per day -->
-      <a href="/wordle" class="bg-white/90 rounded-3xl shadow-xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform duration-150 {% if wordle_done %}opacity-60 pointer-events-none{% endif %}">
-        <div class="text-5xl text-center">🐾</div>
-        <h2 class="text-xl font-bold text-center text-gray-800">Animal Wordle</h2>
-        <p class="text-gray-500 text-center text-sm">Guess the 5-letter animal name</p>
-        <div class="text-center font-bold text-lg text-yellow-600">$50 for solving it</div>
-        <div class="text-center text-xs {% if wordle_done %}text-red-400 font-semibold{% else %}text-gray-400{% endif %}">
+      <!-- Wordle -->
+      <a href="/wordle" class="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 flex flex-col items-center gap-3 hover:scale-[1.03] hover:shadow-2xl transition-all duration-150 {% if wordle_done %}opacity-60 pointer-events-none{% endif %}">
+        <div class="text-6xl">🐾</div>
+        <h2 class="text-lg font-extrabold text-gray-800 uppercase tracking-wide">Animal Wordle</h2>
+        <p class="text-gray-500 text-center text-xs leading-relaxed">Guess the 5-letter animal name in 6 tries</p>
+        <div class="mt-auto w-full text-center font-bold text-sm text-white rounded-xl py-2 px-4 bg-yellow-500">$50 for solving it</div>
+        <div class="text-xs {% if wordle_done %}text-red-400 font-semibold{% else %}text-gray-400{% endif %}">
           {% if wordle_done %}Done for today!{% else %}Once per day{% endif %}
         </div>
       </a>
 
       <!-- Pac-Man -->
-      <a href="/pacman" class="bg-white/90 rounded-3xl shadow-xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform duration-150">
-        <div class="text-5xl text-center">🟡</div>
-        <h2 class="text-xl font-bold text-center text-gray-800">Pac-Man</h2>
-        <p class="text-gray-500 text-center text-sm">Eat pellets, dodge ghosts</p>
-        <div class="text-center font-bold text-lg text-yellow-600">$5 per pellet eaten</div>
-        <div class="text-center text-xs text-gray-400">Unlimited plays</div>
+      <a href="/pacman" class="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 flex flex-col items-center gap-3 hover:scale-[1.03] hover:shadow-2xl transition-all duration-150">
+        <div class="text-6xl">🟡</div>
+        <h2 class="text-lg font-extrabold text-gray-800 uppercase tracking-wide">Pac-Man</h2>
+        <p class="text-gray-500 text-center text-xs leading-relaxed">Eat pellets, dodge the ghosts</p>
+        <div class="mt-auto w-full text-center font-bold text-sm text-white rounded-xl py-2 px-4 bg-yellow-400">$5 per pellet eaten</div>
+        <div class="text-xs text-gray-400">Unlimited plays</div>
       </a>
 
       <!-- Tetris -->
-      <a href="/tetris" class="bg-white/90 rounded-3xl shadow-xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform duration-150">
-        <div class="text-5xl text-center">🟦</div>
-        <h2 class="text-xl font-bold text-center text-gray-800">Tetris</h2>
-        <p class="text-gray-500 text-center text-sm">Clear lines to earn coins</p>
-        <div class="text-center font-bold text-lg text-red-600">$10 per line cleared</div>
-        <div class="text-center text-xs text-gray-400">Unlimited plays</div>
+      <a href="/tetris" class="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 flex flex-col items-center gap-3 hover:scale-[1.03] hover:shadow-2xl transition-all duration-150">
+        <div class="text-6xl">🟦</div>
+        <h2 class="text-lg font-extrabold text-gray-800 uppercase tracking-wide">Tetris</h2>
+        <p class="text-gray-500 text-center text-xs leading-relaxed">Clear lines to stack up coins</p>
+        <div class="mt-auto w-full text-center font-bold text-sm text-white rounded-xl py-2 px-4 bg-blue-500">$10 per line cleared</div>
+        <div class="text-xs text-gray-400">Unlimited plays</div>
       </a>
 
     </div>

@@ -23,44 +23,52 @@
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
 
     <!--NAV BAR-->
-    <nav class="">
-      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-        <a class="flex items-center" href="/">
-          <img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded">
+    <nav>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
         </a>
-        <div class="p-5 flex flex-row justify-end space-x-4">
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/rewards">Rewards</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
-          <a class="font-semibold rounded-lg text-white py-3 px-5 shadow-md" href="/customize" style="background-color: {{theme_color}};">🎨</a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold rounded-xl bg-white text-gray-800 py-2 px-4 text-sm" href="/profile">Profile</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
+          <a class="font-bold rounded-xl text-white py-2 px-4 text-sm shadow-lg transition hover:opacity-90" href="/customize" style="background-color: {{theme_color}};">🎨</a>
         </div>
       </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">{{user}}'s Profile Page</h1>
+    <!-- Page header -->
+    <div class="text-center pt-10 pb-4 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">{{user}}'s Profile</h1>
+    </div>
 
-    <div class="grid grid-cols-3 gap-x-4 mx-6">
-      <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
-        <h2 class="font-semibold uppercase text-gray-800">Username: {{user}}</h2>
+    <!-- Stats cards -->
+    <div class="grid grid-cols-3 gap-4 mx-6 mt-2 max-w-3xl mx-auto">
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-xl flex flex-col gap-1">
+        <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Username</p>
+        <p class="text-lg font-extrabold text-gray-800 truncate">{{user}}</p>
       </div>
-      <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
-        <h2 class="font-semibold uppercase text-gray-800">Balance: ${{money}}</h2>
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-xl flex flex-col gap-1">
+        <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Balance</p>
+        <p class="text-lg font-extrabold text-gray-800">${{money}}</p>
       </div>
-      <div class="bg-white/80 rounded-2xl my-4 p-4 shadow">
-        <h2 class="font-semibold uppercase text-gray-800">Food Stock: {{food}}</h2>
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-xl flex flex-col gap-1">
+        <p class="text-xs font-bold uppercase text-gray-400 tracking-widest">Food Stock</p>
+        <p class="text-lg font-extrabold text-gray-800">{{food}} 🍃</p>
       </div>
     </div>
 
-    <div class="bg-white/80 rounded-2xl my-4 p-4 mx-6 shadow">
-      <h2 class="font-semibold uppercase text-gray-800">History of Rescues:</h2>
-    </div>
-
-    <div class="bg-white/80 rounded-2xl mx-6 my-4 shadow">
-      <table class="w-full table-fixed border-separate border-spacing-x-4">
-        {{table|safe}}
-      </table>
+    <!-- Rescue history -->
+    <div class="mx-6 mt-6 mb-8 max-w-4xl mx-auto">
+      <h2 class="text-white font-bold uppercase tracking-widest text-sm mb-3 drop-shadow">Rescue History</h2>
+      <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+        <table class="w-full table-fixed border-separate border-spacing-x-4">
+          {{table|safe}}
+        </table>
+      </div>
     </div>
 
   </body>

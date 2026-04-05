@@ -15,42 +15,49 @@
   </head>
   <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
     <nav>
-      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
-        <a class="flex items-center" href="/"><img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded"></a>
-        <div class="p-5 flex flex-row justify-end space-x-4">
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
-          <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
-          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+      <div class="bg-gray-800/95 backdrop-blur-sm flex items-center justify-between h-20 px-6">
+        <a class="flex items-center gap-2" href="/">
+          <img src="/static/favicon.ico" alt="icon" class="h-10 w-10 rounded-xl">
+          <span class="text-white font-extrabold text-xl tracking-wide hidden sm:block">Koala</span>
+        </a>
+        <div class="flex flex-row items-center gap-2">
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/">Home</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/profile">Profile</a>
+          <a class="font-semibold rounded-xl bg-white text-gray-800 py-2 px-4 text-sm" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/wild">Wild</a>
+          <a class="font-semibold bg-white/10 rounded-xl text-white hover:bg-white hover:text-gray-800 py-2 px-4 text-sm transition" href="/logout">Logout</a>
         </div>
       </div>
     </nav>
 
-    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">🟡 Pac-Man — $5 per pellet!</h1>
+    <div class="text-center pt-8 pb-2 px-6">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg uppercase tracking-wide">🟡 Pac-Man</h1>
+      <p class="text-white/80 mt-1 text-sm font-medium">$5 per pellet eaten</p>
+    </div>
 
-    <div class="flex justify-center gap-8 mt-4 pb-8 items-start flex-wrap">
+    <div class="flex justify-center gap-8 mt-4 pb-8 items-start flex-wrap px-4">
       <canvas id="pacman" width="420" height="420"></canvas>
 
       <div class="flex flex-col gap-4" style="min-width: 180px;">
-        <div class="bg-white/90 rounded-2xl shadow p-4">
-          <div class="text-gray-500 text-sm font-semibold uppercase">Pellets Eaten</div>
-          <div id="pellets-display" class="text-3xl font-bold text-gray-800">0</div>
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-5">
+          <p class="text-xs font-bold uppercase text-gray-400 tracking-widest mb-1">Pellets Eaten</p>
+          <div id="pellets-display" class="text-3xl font-extrabold text-gray-800">0</div>
         </div>
-        <div class="bg-white/90 rounded-2xl shadow p-4">
-          <div class="text-gray-500 text-sm font-semibold uppercase">Coins Earned</div>
-          <div id="coins-display" class="text-3xl font-bold" style="color: {{theme_color}};">$0</div>
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-5">
+          <p class="text-xs font-bold uppercase text-gray-400 tracking-widest mb-1">Coins Earned</p>
+          <div id="coins-display" class="text-3xl font-extrabold" style="color: {{theme_color}};">$0</div>
         </div>
-        <div class="bg-white/90 rounded-2xl shadow p-4 text-sm text-gray-600">
-          <div class="font-bold mb-1">Controls</div>
-          <div>Arrow keys to move</div>
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-5 text-sm text-gray-600">
+          <p class="text-xs font-bold uppercase text-gray-400 tracking-widest mb-2">Controls</p>
+          <div><span class="font-semibold text-gray-700">Arrow keys</span> to move</div>
         </div>
-        <div id="game-over-box" class="bg-white/90 rounded-2xl shadow p-4 text-center hidden">
-          <div class="font-bold text-gray-800 text-lg mb-1" id="game-over-title">Game Over!</div>
-          <div id="final-coins" class="font-semibold mb-2" style="color: {{theme_color}};"></div>
-          <div class="text-sm text-gray-500">Saving your coins...</div>
+        <div id="game-over-box" class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-5 text-center hidden">
+          <div class="text-3xl mb-2">🟡</div>
+          <div class="font-extrabold text-gray-800 text-lg mb-1" id="game-over-title">Game Over!</div>
+          <div id="final-coins" class="font-bold mb-2 text-sm" style="color: {{theme_color}};"></div>
+          <div class="text-xs text-gray-400">Saving your coins...</div>
         </div>
-        <a href="/rewards" class="font-semibold text-white rounded-xl px-6 py-3 text-center shadow" style="background-color: {{theme_color}};">← Back to Rewards</a>
+        <a href="/rewards" class="font-bold text-white rounded-xl px-6 py-3 text-center shadow-lg hover:opacity-90 transition text-sm" style="background-color: {{theme_color}};">← Back to Rewards</a>
       </div>
     </div>
 
