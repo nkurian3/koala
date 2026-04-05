@@ -347,8 +347,8 @@ def wild():
 
 
             injury = random.choices(
-                list(INJURIES.keys()),
-                weights=[40, 15, 15, 15, 15]
+                ["malnourished", "old_age", "parasites", "broken_leg"],
+                weights=[25, 25, 25, 25]
             )[0]
 
             db = sqlite3.connect(DB_FILE)

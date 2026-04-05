@@ -3,6 +3,10 @@
   src: url(/static/font/Inter-VariableFont_opsz,wght.ttf);
 }
 
+head {
+  display: none !important;
+}
+
 html, body {
   font-family: font;
   margin: 0;

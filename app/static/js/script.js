@@ -49,7 +49,7 @@ for (let i = 0; i < buttons.length; i++) {
 
         n.textContent = this.dataset.name;
         s.textContent = this.dataset.species;
-        h.textContent = this.dataset.health === 'sick' ? 'Injured' : 'Healthy';
+        h.textContent = 'Needs rescue';
 
         ina.value = this.dataset.name;
         is.value = this.dataset.species;
