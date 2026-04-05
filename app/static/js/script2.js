@@ -18,10 +18,44 @@
         } else {
             fee.style.display = "none";
             rel.style.display = "inline-block";
-
         }
-
     }
+
+    let releasing = false;
+    let moveTimeout = null;
+
+    document.getElementById("formy2").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const form = this;
+
+        releasing = true;
+        if (moveTimeout) clearTimeout(moveTimeout);
+
+        const rect = pp.getBoundingClientRect();
+        const img  = pp.querySelector("img");
+        const clone = img.cloneNode(true);
+
+        clone.style.position   = "fixed";
+        clone.style.left       = rect.left + "px";
+        clone.style.top        = rect.top  + "px";
+        clone.style.width      = rect.width + "px";
+        clone.style.height     = rect.height + "px";
+        clone.style.zIndex     = "9999";
+        clone.style.pointerEvents = "none";
+        clone.style.transform  = "";
+        clone.style.transition = "none";
+        document.body.appendChild(clone);
+
+        pp.style.visibility = "hidden";
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                clone.classList.add("run-away");
+            });
+        });
+
+        setTimeout(() => form.submit(), 2500);
+    });
     
 
 
@@ -41,6 +75,7 @@ for (let i = 0; i < animals.length; i++){
 
 
 function moving(animal){
+    if (releasing) return;
 
     const rX = Math.floor((Math.random() * 2 - 1)  * (window.innerWidth));
     animal.style.animation = "none";
@@ -50,8 +85,8 @@ function moving(animal){
 
     animal.style.transform = changeX < 0? "scaleX(1)" : "scaleX(-1)";
     animal.style.left = rX + 'px';
-    setTimeout(() => moving(animal), 3000);
-} 
+    moveTimeout = setTimeout(() => moving(animal), 3000);
+}
 
 for (let i = 0; i < animals.length; i++) {
     moving(animals[i]);

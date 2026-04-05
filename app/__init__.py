@@ -408,6 +408,16 @@ def enclosure(a_rowid):
             db.close()
 
 
+        if request.form.get("action") == "rename":
+            db = get_db()
+            money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+            new_name = request.form.get("new_name", "").strip()[:20]
+            if new_name and money >= 40:
+                db.execute("UPDATE users SET money = money - 40 WHERE user_id = ?", (session["user_id"],))
+                db.execute("UPDATE animals SET name = ? WHERE animal_id = ?", (new_name, int(request.form.get("id"))))
+                db.commit()
+            db.close()
+
         if request.form.get("action") == "feedall":
             import datetime
             db = get_db()
@@ -504,10 +514,11 @@ def enclosure(a_rowid):
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
     canFeed = currF >= food_cost
 
+    currMoney = fetch('users', 'user_id = ?', 'money', (session["user_id"],))[0][0]
     theme = get_user_theme()
     return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid,
                            canFeed = canFeed, injury = injury_info, urgency_color = urgency_color,
-                           food_cost = food_cost, mood = mood, mood_color = mood_color, **theme)
+                           food_cost = food_cost, mood = mood, mood_color = mood_color, money = currMoney, **theme)
 
 
 
