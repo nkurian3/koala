@@ -250,7 +250,7 @@ def register():
             c.execute("SELECT COUNT(*) FROM users")
             u_id = c.fetchall()[0][0]
             c.execute(
-                "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     u_id,
                     request.form["username"],
@@ -258,7 +258,10 @@ def register():
                     3,
                     0,
                     0,
-                    0
+                    0,
+                    '#00A86B',
+                    '/static/backdrops/wild_backdrop.png',
+                    ''
                 )
             )
             db.commit()
