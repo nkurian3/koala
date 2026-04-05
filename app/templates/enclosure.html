@@ -50,6 +50,9 @@
 
       <div popover id="myPopover">
 
+        <!-- Mood -->
+        <p style="color: {{mood_color}}; font-weight: 700; font-size: 1rem; margin-bottom: 2px;">{{mood}}</p>
+
         <!-- Injury status -->
         <p style="color: {{urgency_color}}; font-weight: 700; font-size: 1rem; margin-bottom: 4px;">
           {{injury.emoji}} {{injury.label}}
@@ -63,12 +66,19 @@
         <p style="font-size: 0.75rem; color: #888; margin-top: 4px;">Each feed costs {{food_cost}} 🍃 food</p>
         <br>
 
-        <form id="formy" action="/enclosure/{{a}}" method="POST">
-          <input type="hidden" name="action" value="feeding" >
-          <input type="hidden" name="id" value= {{a}}>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <form id="formy" action="/enclosure/{{a}}" method="POST">
+            <input type="hidden" name="action" value="feeding">
+            <input type="hidden" name="id" value={{a}}>
+            <button id="feed" data-c='{{canFeed}}'>🍃 Feed ({{food_cost}})</button>
+          </form>
 
-          <button id = "feed" data-c = '{{canFeed}}'>🍃 Feed ({{food_cost}})</button>
-        </form>
+          <form action="/enclosure/{{a}}" method="POST">
+            <input type="hidden" name="action" value="feedall">
+            <input type="hidden" name="id" value={{a}}>
+            <button id="feedall" data-c='{{canFeed}}'>🍃 Feed All</button>
+          </form>
+        </div>
        
 
         <form id="formy2" action="/enclosure/{{a}}" method="POST">

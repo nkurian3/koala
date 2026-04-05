@@ -71,6 +71,14 @@ try:
 except:
     pass
 
+try:
+    _db = get_db()
+    _db.execute("ALTER TABLE animals ADD COLUMN last_fed TEXT DEFAULT ''")
+    _db.commit()
+    _db.close()
+except:
+    pass
+
 INJURIES = {
     "healthy":     {"label": "Healthy",      "emoji": "💚", "description": "No issues.",                         "food_cost": 1, "urgency": "low"},
     "malnourished":{"label": "Malnourished", "emoji": "🍂", "description": "Needs 3× food to recover.",          "food_cost": 3, "urgency": "high"},
@@ -392,11 +400,32 @@ def enclosure(a_rowid):
             food_cost = INJURIES.get(injury_key, INJURIES["healthy"])["food_cost"]
             curr_food = db.execute("SELECT food FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
             if curr_food >= food_cost:
-                c.execute("UPDATE animals SET health = MIN(10, health + 1) WHERE animal_id = ?", (animal_id,))
+                import datetime
+                now = datetime.datetime.utcnow().isoformat()
+                c.execute("UPDATE animals SET health = MIN(10, health + 1), last_fed = ? WHERE animal_id = ?", (now, animal_id))
                 c.execute("UPDATE users SET food = food - ? WHERE user_id = ?", (food_cost, session["user_id"]))
             db.commit()
             db.close()
 
+
+        if request.form.get("action") == "feedall":
+            import datetime
+            db = get_db()
+            animal_id = int(request.form.get("id"))
+            row = db.execute("SELECT health, injury FROM animals WHERE animal_id = ?", (animal_id,)).fetchone()
+            curr_health, injury_key = row[0], row[1] or "healthy"
+            food_cost = INJURIES.get(injury_key, INJURIES["healthy"])["food_cost"]
+            curr_food = db.execute("SELECT food FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+            needed = 10 - curr_health
+            feeds = min(needed, curr_food // food_cost)
+            if feeds > 0:
+                now = datetime.datetime.utcnow().isoformat()
+                db.execute("UPDATE animals SET health = health + ?, last_fed = ? WHERE animal_id = ?",
+                           (feeds, now, animal_id))
+                db.execute("UPDATE users SET food = food - ? WHERE user_id = ?",
+                           (feeds * food_cost, session["user_id"]))
+                db.commit()
+            db.close()
 
         if request.form.get("action") == "releasing":
             db = sqlite3.connect(DB_FILE)
@@ -423,15 +452,53 @@ def enclosure(a_rowid):
     if ev[0][6] == 1:
         return redirect("/")
 
-    rad = str(ev[0][3] * 10) + "%"
-    strR = "width:" + rad
-    ra = ev[0][3] * 10
-    n = ev[0][4]
+    import datetime
 
+    health   = ev[0][3]
+    n        = ev[0][4]
     injury_key = ev[0][7] if len(ev[0]) > 7 else "healthy"
-    injury_info = INJURIES.get(injury_key or "healthy", INJURIES["healthy"])
-    food_cost = injury_info["food_cost"]
+    last_fed   = ev[0][8] if len(ev[0]) > 8 else ""
+
+    # mood decay: health drops 1 point per 6 hours after a 12-hour grace period
+    if last_fed:
+        try:
+            last_fed_dt  = datetime.datetime.fromisoformat(last_fed)
+            hours_since  = (datetime.datetime.utcnow() - last_fed_dt).total_seconds() / 3600
+            if hours_since > 12:
+                decay = int((hours_since - 12) / 6)
+                decay = min(decay, health - 1)   # never drop below 1
+                if decay > 0:
+                    db = get_db()
+                    db.execute("UPDATE animals SET health = MAX(1, health - ?) WHERE animal_id = ? AND health > 1",
+                               (decay, int(a_rowid)))
+                    db.commit()
+                    db.close()
+                    health = max(1, health - decay)
+        except:
+            pass
+
+    # mood label based on time since last fed
+    mood = "Happy 😊"
+    mood_color = "#16a34a"
+    if last_fed:
+        try:
+            hours_since = (datetime.datetime.utcnow() - datetime.datetime.fromisoformat(last_fed)).total_seconds() / 3600
+            if hours_since > 24:
+                mood = "Starving 😵"
+                mood_color = "#dc2626"
+            elif hours_since > 12:
+                mood = "Hungry 😟"
+                mood_color = "#ea580c"
+        except:
+            pass
+
+    injury_info  = INJURIES.get(injury_key or "healthy", INJURIES["healthy"])
+    food_cost    = injury_info["food_cost"]
     urgency_color = URGENCY_COLORS[injury_info["urgency"]]
+
+    rad   = str(health * 10) + "%"
+    strR  = "width:" + rad
+    ra    = health * 10
 
     #check if food is available
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
@@ -439,7 +506,8 @@ def enclosure(a_rowid):
 
     theme = get_user_theme()
     return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid,
-                           canFeed = canFeed, injury = injury_info, urgency_color = urgency_color, food_cost = food_cost, **theme)
+                           canFeed = canFeed, injury = injury_info, urgency_color = urgency_color,
+                           food_cost = food_cost, mood = mood, mood_color = mood_color, **theme)
 
 
 
