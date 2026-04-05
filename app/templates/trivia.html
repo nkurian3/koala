@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TRIVIA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
+    <style>
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0px); }
+        30%       { transform: translateY(-30px); }
+        60%       { transform: translateY(-10px); }
+      }
+      .dancing { animation: bounce 0.8s ease-in-out infinite; transform-origin: bottom center; }
+    </style>
+  </head>
+  <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
+    <nav>
+      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
+        <a class="flex items-center" href="/"><img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded"></a>
+        <div class="p-5 flex flex-row justify-end space-x-4">
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
+          <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">🧠 Trivia — $30 per correct answer!</h1>
+
+    <div class="flex items-start justify-center gap-8 mx-6 mt-6">
+      <div class="flex flex-col items-center justify-end" style="min-width:140px; height: 260px;">
+        <img src="/static/animal_animations/bunny_hover.gif" alt="dancing animal" class="dancing w-28">
+      </div>
+
+      <div class="flex-1 max-w-2xl">
+        <div class="bg-white/80 rounded-2xl px-6 py-3 mb-4 flex items-center gap-2 shadow">
+          <span class="text-2xl">💰</span>
+          <h2 class="font-bold text-gray-800 text-lg">Balance: ${{money}}</h2>
+        </div>
+
+        <div class="bg-white/80 rounded-2xl px-6 py-5 mb-4 shadow">
+          <h2 class="font-semibold text-gray-800 text-lg leading-snug">{{question}}</h2>
+        </div>
+
+        <form method="POST" action="/trivia">
+          <div class="grid grid-cols-2 gap-3">
+            {% for ans in answers %}
+              <button type="submit" name="answer" value="{{ans}}"
+                class="answer-btn font-semibold bg-white/80 text-gray-800 rounded-2xl py-4 px-4 shadow transition-colors duration-150 text-left"
+                data-color="{{theme_color}}">{{ans}}</button>
+            {% endfor %}
+          </div>
+          <script>
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+              btn.addEventListener('mouseover', () => { btn.style.backgroundColor = btn.dataset.color; btn.style.color = 'white'; });
+              btn.addEventListener('mouseout', () => { btn.style.backgroundColor = ''; btn.style.color = ''; });
+            });
+          </script>
+        </form>
+
+        {% if response %}
+          <div class="mt-4 bg-white/80 rounded-2xl px-6 py-4 shadow text-center font-bold text-gray-800 text-lg">{{response}}</div>
+        {% endif %}
+
+        <div class="mt-4 text-center">
+          <a href="/rewards" class="font-semibold text-white rounded-xl px-6 py-3" style="background-color: {{theme_color}};">← Back to Rewards</a>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center justify-end" style="min-width:140px; height: 260px;">
+        <img src="/static/animal_animations/squirrel_hover.gif" alt="dancing animal" class="dancing w-28" style="animation-delay: 0.4s; transform: scaleX(-1);">
+      </div>
+    </div>
+  </body>
+</html>

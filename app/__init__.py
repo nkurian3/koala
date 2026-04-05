@@ -62,6 +62,28 @@ c.execute(
 db.commit()
 db.close()
 
+# add injury column if it doesn't exist yet
+try:
+    _db = get_db()
+    _db.execute("ALTER TABLE animals ADD COLUMN injury TEXT DEFAULT 'healthy'")
+    _db.commit()
+    _db.close()
+except:
+    pass
+
+INJURIES = {
+    "healthy":     {"label": "Healthy",      "emoji": "💚", "description": "No issues.",                         "food_cost": 1, "urgency": "low"},
+    "malnourished":{"label": "Malnourished", "emoji": "🍂", "description": "Needs 3× food to recover.",          "food_cost": 3, "urgency": "high"},
+    "old_age":     {"label": "Old Age",      "emoji": "🧓", "description": "Frail — heals slowly.",              "food_cost": 2, "urgency": "medium"},
+    "parasites":   {"label": "Parasites",    "emoji": "🪱", "description": "Losing health fast. Act quickly!",   "food_cost": 2, "urgency": "high"},
+    "broken_leg":  {"label": "Broken Leg",   "emoji": "🦴", "description": "Can't move well. Needs extra food.", "food_cost": 2, "urgency": "medium"},
+}
+
+URGENCY_COLORS = {
+    "low":    "#16a34a",   # green
+    "medium": "#ea580c",   # orange
+    "high":   "#dc2626",   # red
+}
 
 # HTML PAGES
 # LANDING PAGE
@@ -263,6 +285,11 @@ def wild():
             path = f"{basepath}/{image}"
 
 
+            injury = random.choices(
+                list(INJURIES.keys()),
+                weights=[40, 15, 15, 15, 15]
+            )[0]
+
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
             c.execute('''UPDATE users
@@ -271,9 +298,9 @@ def wild():
             ''', (session["user_id"],))
             print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
             c.execute('''
-            INSERT INTO animals (user_id, species, health, name, path, released)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ''', (session["user_id"], request.form.get("species"), r, request.form.get("name"), path, 0,))
+            INSERT INTO animals (user_id, species, health, name, path, released, injury)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (session["user_id"], request.form.get("species"), r, request.form.get("name"), path, 0, injury,))
 
             db.commit()
             db.close()
@@ -309,16 +336,13 @@ def enclosure(a_rowid):
         if request.form.get("action") == "feeding":
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
-            c.execute('''UPDATE animals
-            SET health = health + 1
-            WHERE animal_id = ?
-            ''', (int(request.form.get("id")),))
-
-            c.execute('''UPDATE users
-            SET food = food - 1
-            WHERE user_id = ?
-            ''', (session["user_id"],))
-
+            animal_id = int(request.form.get("id"))
+            injury_key = db.execute("SELECT injury FROM animals WHERE animal_id = ?", (animal_id,)).fetchone()[0] or "healthy"
+            food_cost = INJURIES.get(injury_key, INJURIES["healthy"])["food_cost"]
+            curr_food = db.execute("SELECT food FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+            if curr_food >= food_cost:
+                c.execute("UPDATE animals SET health = MIN(10, health + 1) WHERE animal_id = ?", (animal_id,))
+                c.execute("UPDATE users SET food = food - ? WHERE user_id = ?", (food_cost, session["user_id"]))
             db.commit()
             db.close()
 
@@ -343,72 +367,215 @@ def enclosure(a_rowid):
     #info for food percentages--animal starts with random health below 100
     ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
 
-    print(a_rowid)
-    print('AAAAAAAAAAAAAAAAAAA')
-    print(ev)
-
-
-
+    if not ev:
+        return redirect("/")
+    if ev[0][6] == 1:
+        return redirect("/")
 
     rad = str(ev[0][3] * 10) + "%"
     strR = "width:" + rad
     ra = ev[0][3] * 10
     n = ev[0][4]
 
+    injury_key = ev[0][7] if len(ev[0]) > 7 else "healthy"
+    injury_info = INJURIES.get(injury_key or "healthy", INJURIES["healthy"])
+    food_cost = injury_info["food_cost"]
+    urgency_color = URGENCY_COLORS[injury_info["urgency"]]
 
     #check if food is available
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
-    canFeed = currF > 0
+    canFeed = currF >= food_cost
 
-    return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid, canFeed = canFeed)
+    return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid,
+                           canFeed = canFeed, injury = injury_info, urgency_color = urgency_color, food_cost = food_cost)
 
 
 
+
+TRIVIA_POOL_PATH = os.path.join(os.path.dirname(__file__), "trivia_pool.json")
 
 def getTrivia():
-    url = "https://opentdb.com/api.php?amount=1&type=multiple"
+    url = "https://opentdb.com/api.php?amount=1&category=27&type=multiple"
     data = get_data(url)
-    if not data or "results" not in data or not data["results"]:
-        return {"question": "Error fetching question.", "correct": "", "answers": []}
-    q = data["results"][0]
-    question = html.unescape(q["question"])
-    correct = html.unescape(q["correct_answer"])
-    incorrect = [html.unescape(a) for a in q["incorrect_answers"]]
-    answers = incorrect + [correct]
+    if data and "results" in data and data["results"]:
+        q = data["results"][0]
+        question = html.unescape(q["question"])
+        correct = html.unescape(q["correct_answer"])
+        incorrect = [html.unescape(a) for a in q["incorrect_answers"]]
+        answers = incorrect + [correct]
+        random.shuffle(answers)
+        return {"question": question, "correct": correct, "answers": answers}
+    # fallback to local pool
+    with open(TRIVIA_POOL_PATH) as f:
+        pool = json.load(f)
+    q = random.choice(pool)
+    answers = q["incorrect"] + [q["correct"]]
     random.shuffle(answers)
-    return {"question": question, "correct": correct, "answers": answers}
+    return {"question": q["question"], "correct": q["correct"], "answers": answers}
+
+
+# add wordle_last_played column if it doesn't exist yet
+try:
+    _db2 = get_db()
+    _db2.execute("ALTER TABLE users ADD COLUMN wordle_last_played TEXT DEFAULT ''")
+    _db2.commit()
+    _db2.close()
+except:
+    pass
+
+WORDLE_WORDS = ["BEARS", "BUNNY", "CRANE", "FINCH", "GECKO", "HERON", "KOALA", "LEMUR",
+                "MOOSE", "OTTER", "PANDA", "QUAIL", "RAVEN", "SKUNK", "TAPIR", "VIPER",
+                "WHALE", "ZEBRA", "BISON", "EAGLE", "HYENA", "LLAMA", "ROBIN", "SHARK",
+                "TIGER", "TROUT", "FOXES", "GOOSE", "SNAIL", "MOUSE"]
+
 
 @app.route("/rewards", methods=["GET", "POST"])
-
 def rewards():
     if "user_id" not in session:
-        return redirect ("/login")
+        return redirect("/login")
+    from datetime import date
+    today = str(date.today())
+    db = get_db()
+    money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    wordle_last = db.execute("SELECT wordle_last_played FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    wordle_done = wordle_last == today
+    db.close()
+    return render_template("rewards.html", money=money, wordle_done=wordle_done)
+
+
+@app.route("/trivia", methods=["GET", "POST"])
+def trivia():
+    if "user_id" not in session:
+        return redirect("/login")
     response = ""
     db = get_db()
     money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
-    trivia = session.get ("trivia")
-
-    if not trivia:
+    trivia = session.get("trivia")
+    if not trivia or not trivia.get("answers"):
         trivia = getTrivia()
-        session ["trivia"] = trivia
-        session ["correct_answer"] = trivia["correct"]
-
+        session["trivia"] = trivia
+        session["correct_answer"] = trivia["correct"]
     if request.method == "POST":
-        selected = request.form.get ("answer")
-        correct = session.get ("correct_answer")
+        selected = request.form.get("answer")
+        correct = session.get("correct_answer")
         if selected == correct:
-            db.execute ("UPDATE users SET money = money + 30 WHERE user_id = ?", (session["user_id"],))
+            db.execute("UPDATE users SET money = money + 30 WHERE user_id = ?", (session["user_id"],))
             db.commit()
             money += 30
-            response = "Correct! Here's 30 coins!"
+            response = "Correct! +$30!"
         else:
-            response = f"Incorrect! The correct answer was: {correct}"
-    #reloads another question & updates info
+            response = f"Incorrect! The answer was: {correct}"
         trivia = getTrivia()
-        session ["trivia"] = trivia
-        session ["correct_answer"] = trivia["correct"]
+        session["trivia"] = trivia
+        session["correct_answer"] = trivia["correct"]
     db.close()
-    return render_template("rewards.html", question = trivia["question"], answers = trivia["answers"], response = response, money = money)
+    return render_template("trivia.html", question=trivia["question"], answers=trivia["answers"],
+                           response=response, money=money, theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+
+
+@app.route("/wordle", methods=["GET", "POST"])
+def wordle():
+    if "user_id" not in session:
+        return redirect("/login")
+    from datetime import date
+    today = str(date.today())
+    db = get_db()
+    wordle_last = db.execute("SELECT wordle_last_played FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    already_played = wordle_last == today
+    money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    db.close()
+
+    if request.method == "POST" and not already_played:
+        won = request.form.get("won") == "true"
+        db = get_db()
+        if won:
+            db.execute("UPDATE users SET money = money + 50, wordle_last_played = ? WHERE user_id = ?", (today, session["user_id"]))
+        else:
+            db.execute("UPDATE users SET wordle_last_played = ? WHERE user_id = ?", (today, session["user_id"]))
+        db.commit()
+        db.close()
+        already_played = True
+
+    # pick word once per day and lock in session so it never changes mid-game
+    if session.get("wordle_date") != today:
+        session["wordle_date"] = today
+        session["wordle_word"] = random.choice(WORDLE_WORDS)
+    word = session["wordle_word"]
+
+    return render_template("wordle.html", word=word, already_played=already_played, money=money,
+                           theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+
+
+@app.route("/hint", methods=["POST"])
+def hint():
+    if "user_id" not in session:
+        return {"error": "not logged in"}, 401
+    HINT_COST = 75
+    db = get_db()
+    money = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    if money < HINT_COST:
+        db.close()
+        return {"error": "Not enough coins! Hints cost $75."}, 400
+
+    word = session.get("wordle_word", "")
+    hint_index = int(request.form.get("hint_index", 0))
+    known = request.form.get("known", "")
+    known_indices = set(int(i) for i in known.split(",") if i.strip().isdigit())
+    unknown_indices = [i for i in range(len(word)) if i not in known_indices]
+
+    hints = []
+    if unknown_indices:
+        idx = unknown_indices[hint_index % len(unknown_indices)]
+        hints.append({"type": "position", "index": idx, "letter": word[idx],
+                      "text": f'The letter at position {idx + 1} is "{word[idx]}"'})
+    unrevealed_letters = list(set(word[i] for i in unknown_indices))
+    if unrevealed_letters:
+        letter = unrevealed_letters[hint_index % len(unrevealed_letters)]
+        hints.append({"type": "contains", "letter": letter,
+                      "text": f'The word contains the letter "{letter}"'})
+    all_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    not_in_word = [l for l in all_letters if l not in word]
+    if not_in_word:
+        letter = not_in_word[hint_index % len(not_in_word)]
+        hints.append({"type": "absent", "letter": letter,
+                      "text": f'The word does NOT contain "{letter}"'})
+
+    chosen = hints[hint_index % len(hints)]
+    db.execute("UPDATE users SET money = money - ? WHERE user_id = ?", (HINT_COST, session["user_id"]))
+    db.commit()
+    new_balance = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+    db.close()
+    chosen["balance"] = new_balance
+    return chosen
+
+
+@app.route("/earn", methods=["POST"])
+def earn():
+    if "user_id" not in session:
+        return {"error": "not logged in"}, 401
+    amount = int(request.form.get("amount", 0))
+    if amount > 0:
+        db = get_db()
+        db.execute("UPDATE users SET money = money + ? WHERE user_id = ?", (amount, session["user_id"]))
+        db.commit()
+        new_balance = db.execute("SELECT money FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+        db.close()
+        return {"balance": new_balance}
+    return {"error": "invalid amount"}, 400
+
+
+@app.route("/tetris")
+def tetris():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("tetris.html", theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
+
+
+@app.route("/pacman")
+def pacman():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("pacman.html", theme_color="#00A86B", backdrop="/static/backdrops/wild_backdrop.png")
 
 
 #helper fxns
@@ -434,24 +601,19 @@ def get_data(url):
         return None
 
 def tableString(r):
-    ans = fetch('animals', 'user_id = ? AND released == ?', 'name', (session["user_id"], r,))
-    names = []
-    for i in range(len(ans)):
-        names += ans[i]
-        print(names)
+    db = get_db()
+    animals_rows = db.execute(
+        "SELECT animal_id, name, path, injury FROM animals WHERE user_id = ? AND released = ?",
+        (session["user_id"], r)
+    ).fetchall()
+    db.close()
 
-    ans2 = fetch('animals', 'user_id = ? AND released == ?', 'path', (session["user_id"], r,))
-    paths = []
-    for i in range(len(ans2)):
-        paths += ans2[i]
-
-    ans3 = fetch('animals', 'user_id = ? AND released == ?', 'animal_id', (session["user_id"], r,))
-    ids = []
-    for i in range(len(ans3)):
-        ids += ans3[i]
+    ids     = [a[0] for a in animals_rows]
+    names   = [a[1] for a in animals_rows]
+    paths   = [a[2] for a in animals_rows]
+    injuries = [INJURIES.get(a[3] or "healthy", INJURIES["healthy"]) for a in animals_rows]
 
     tableString = ""
-
 
     for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
         if (i%3==0):
@@ -460,14 +622,16 @@ def tableString(r):
         tableString+= f"""
         <td class = "p-4 border border-gray-300">"""
         if i < len(names):
+            inj = injuries[i]
+            badge_color = URGENCY_COLORS[inj["urgency"]]
             tableString+=f"""
-            <p class="uppercase text-xs">{names[i]}'s Enclosure</p>
+            <p class="uppercase text-xs font-bold">{names[i]}'s Enclosure</p>
+            <p class="text-xs font-semibold" style="color:{badge_color};">{inj['emoji']} {inj['label']}</p>
             <form action="/enclosure/{ids[i]}" method="get">
             <button>
             <div class="relative">
             <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute animalsh">
             """
-
         else:
             tableString+="""
             <p class="uppercase text-xs">Empty Enclosure</p>

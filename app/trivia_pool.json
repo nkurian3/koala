@@ -1,0 +1,102 @@
+[
+  {
+    "question": "What is the largest land animal on Earth?",
+    "correct": "African Elephant",
+    "incorrect": ["White Rhinoceros", "Hippopotamus", "Giraffe"]
+  },
+  {
+    "question": "How many legs does a spider have?",
+    "correct": "8",
+    "incorrect": ["6", "10", "12"]
+  },
+  {
+    "question": "What is the fastest land animal?",
+    "correct": "Cheetah",
+    "incorrect": ["Lion", "Greyhound", "Pronghorn Antelope"]
+  },
+  {
+    "question": "Which bird is known for its ability to mimic human speech?",
+    "correct": "African Grey Parrot",
+    "incorrect": ["Macaw", "Cockatoo", "Myna Bird"]
+  },
+  {
+    "question": "What is the only mammal capable of true flight?",
+    "correct": "Bat",
+    "incorrect": ["Flying Squirrel", "Sugar Glider", "Colugo"]
+  },
+  {
+    "question": "How long is an elephant's pregnancy?",
+    "correct": "22 months",
+    "incorrect": ["12 months", "18 months", "9 months"]
+  },
+  {
+    "question": "What do you call a group of wolves?",
+    "correct": "Pack",
+    "incorrect": ["Herd", "Pride", "Colony"]
+  },
+  {
+    "question": "Which animal has the longest lifespan?",
+    "correct": "Greenland Shark",
+    "incorrect": ["Giant Tortoise", "Bowhead Whale", "Koi Fish"]
+  },
+  {
+    "question": "What is the smallest bird in the world?",
+    "correct": "Bee Hummingbird",
+    "incorrect": ["Goldcrest", "Weebill", "Brown Gerygone"]
+  },
+  {
+    "question": "Which animal sleeps the most hours per day?",
+    "correct": "Koala",
+    "incorrect": ["Sloth", "Cat", "Armadillo"]
+  },
+  {
+    "question": "How many hearts does an octopus have?",
+    "correct": "3",
+    "incorrect": ["1", "2", "4"]
+  },
+  {
+    "question": "What is the loudest animal on Earth?",
+    "correct": "Sperm Whale",
+    "incorrect": ["Blue Whale", "Howler Monkey", "Lion"]
+  },
+  {
+    "question": "Which animal is known as the 'laughing' animal?",
+    "correct": "Hyena",
+    "incorrect": ["Kookaburra", "Chimpanzee", "Dolphin"]
+  },
+  {
+    "question": "What is a group of flamingos called?",
+    "correct": "Flamboyance",
+    "incorrect": ["Flock", "Colony", "Brigade"]
+  },
+  {
+    "question": "How do sea otters keep from drifting apart while sleeping?",
+    "correct": "They hold hands",
+    "incorrect": ["They anchor to seaweed", "They form a circle", "They tie their tails together"]
+  },
+  {
+    "question": "What animal has the thickest fur of any mammal?",
+    "correct": "Sea Otter",
+    "incorrect": ["Arctic Fox", "Musk Ox", "Polar Bear"]
+  },
+  {
+    "question": "Which reptile can change color to match its surroundings?",
+    "correct": "Chameleon",
+    "incorrect": ["Gecko", "Iguana", "Anole"]
+  },
+  {
+    "question": "What is the only continent with no native snake species?",
+    "correct": "Antarctica",
+    "incorrect": ["Iceland", "Ireland", "New Zealand"]
+  },
+  {
+    "question": "How many species of penguins are there?",
+    "correct": "18",
+    "incorrect": ["8", "12", "24"]
+  },
+  {
+    "question": "What animal produces the most milk in the world?",
+    "correct": "Holstein Cow",
+    "incorrect": ["Goat", "Water Buffalo", "Yak"]
+  }
+]
