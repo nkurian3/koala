@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WORDLE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
+    <style>
+      body { font-family: 'Poppins', sans-serif; }
+      .tile {
+        width: 56px;
+        height: 56px;
+        border: 2px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        background: white;
+        transition: background 0.2s, border-color 0.2s;
+        border-radius: 6px;
+      }
+      .tile.correct   { background: var(--theme); border-color: var(--theme); color: white; }
+      .tile.present   { background: #EAB308; border-color: #EAB308; color: white; }
+      .tile.absent    { background: #6B7280; border-color: #6B7280; color: white; }
+      .tile.filled    { border-color: #9ca3af; }
+      .key {
+        min-width: 36px;
+        height: 48px;
+        padding: 0 8px;
+        border-radius: 6px;
+        background: #e5e7eb;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s, color 0.15s;
+      }
+      .key.correct   { background: var(--theme); color: white; }
+      .key.present   { background: #EAB308; color: white; }
+      .key.absent    { background: #6B7280; color: white; }
+      .key.wide { min-width: 56px; }
+      #message-box {
+        min-height: 48px;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}'); --theme: {{theme_color}};">
+    <nav>
+      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
+        <a class="flex items-center" href="/"><img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded"></a>
+        <div class="p-5 flex flex-row justify-end space-x-4">
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
+          <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">🐾 Animal Wordle — Win $50!</h1>
+
+    <div class="flex flex-col items-center mt-4 gap-4">
+      <!-- Balance -->
+      <div class="bg-white/80 rounded-2xl px-6 py-3 flex items-center gap-2 shadow">
+        <span class="text-2xl">💰</span>
+        <h2 class="font-bold text-gray-800 text-lg">Balance: $<span id="balance-display">{{money}}</span></h2>
+      </div>
+
+      {% if already_played %}
+        <!-- Already played today -->
+        <div class="bg-white/90 rounded-3xl shadow-xl p-10 flex flex-col items-center gap-4 mt-4">
+          <div class="text-6xl">🌙</div>
+          <h2 class="text-2xl font-bold text-gray-800">Come back tomorrow!</h2>
+          <p class="text-gray-500 text-center">You've already played today's Animal Wordle.<br>A new word is waiting for you tomorrow.</p>
+          <a href="/rewards" class="font-semibold text-white rounded-xl px-6 py-3 mt-2" style="background-color: {{theme_color}};">← Back to Rewards</a>
+        </div>
+      {% else %}
+        <!-- Game board -->
+        <div id="board" class="flex flex-col gap-1"></div>
+
+        <!-- Message -->
+        <div id="message-box" class="text-center font-bold text-white text-xl drop-shadow"></div>
+
+        <!-- Keyboard -->
+        <div id="keyboard" class="flex flex-col gap-1 items-center mt-2">
+          <div class="flex gap-1" id="row1"></div>
+          <div class="flex gap-1" id="row2"></div>
+          <div class="flex gap-1" id="row3"></div>
+        </div>
+
+        <!-- Hint button -->
+        <div class="flex items-center gap-4 mt-2">
+          <button id="hint-btn" onclick="buyHint()"
+            class="font-semibold text-white rounded-xl px-5 py-3 shadow transition-opacity"
+            style="background-color: #F97316;">
+            💡 Buy Hint — $75
+          </button>
+        </div>
+
+        <!-- Hint display -->
+        <div id="hint-box" class="bg-white/90 rounded-2xl px-6 py-3 shadow font-semibold text-gray-800 text-center" style="display:none;"></div>
+
+        <a href="/rewards" class="font-semibold text-white rounded-xl px-6 py-3 mt-2" style="background-color: {{theme_color}};">← Back to Rewards</a>
+
+        <!-- Hidden form to submit result -->
+        <form id="result-form" method="POST" action="/wordle" style="display:none;">
+          <input type="hidden" name="won" id="won-input" value="false">
+        </form>
+      {% endif %}
+    </div>
+
+    {% if not already_played %}
+    <script>
+      const WORD = "{{word}}";
+      const THEME = "{{theme_color}}";
+      const ROWS = 6;
+      const COLS = 5;
+      const TODAY = new Date().toISOString().slice(0, 10);
+      const STORAGE_KEY = "wordle_state_" + TODAY;
+
+      let currentRow = 0;
+      let currentCol = 0;
+      let gameOver = false;
+      const grid = [];
+      const tileEls = [];
+
+      // Build board
+      const board = document.getElementById("board");
+      for (let r = 0; r < ROWS; r++) {
+        grid.push(Array(COLS).fill(""));
+        tileEls.push([]);
+        const rowEl = document.createElement("div");
+        rowEl.style.display = "flex";
+        rowEl.style.gap = "4px";
+        for (let c = 0; c < COLS; c++) {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tileEls[r].push(tile);
+          rowEl.appendChild(tile);
+        }
+        board.appendChild(rowEl);
+      }
+
+      // Build keyboard
+      const ROWS_KB = [
+        ["Q","W","E","R","T","Y","U","I","O","P"],
+        ["A","S","D","F","G","H","J","K","L"],
+        ["ENTER","Z","X","C","V","B","N","M","⌫"]
+      ];
+      const keyMap = {};
+      ["row1","row2","row3"].forEach((id, ri) => {
+        const rowEl = document.getElementById(id);
+        ROWS_KB[ri].forEach(k => {
+          const btn = document.createElement("button");
+          btn.className = "key" + (k.length > 1 ? " wide" : "");
+          btn.textContent = k;
+          btn.dataset.key = k;
+          btn.addEventListener("click", () => handleKey(k));
+          rowEl.appendChild(btn);
+          if (k !== "ENTER" && k !== "⌫") keyMap[k] = btn;
+        });
+      });
+
+      // Save state to localStorage
+      function saveState() {
+        const state = { currentRow, currentCol, grid, results };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      // Restore state from localStorage
+      const results = Array.from({length: ROWS}, () => Array(COLS).fill(null));
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (saved) {
+        currentRow = saved.currentRow;
+        currentCol = saved.currentCol;
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            grid[r][c] = saved.grid[r][c];
+            if (saved.grid[r][c]) {
+              tileEls[r][c].textContent = saved.grid[r][c];
+              tileEls[r][c].className = "tile filled";
+            }
+            if (saved.results[r][c]) {
+              results[r][c] = saved.results[r][c];
+              tileEls[r][c].className = "tile " + saved.results[r][c];
+              // update keyboard
+              const key = keyMap[saved.grid[r][c]];
+              if (key) {
+                const priority = {correct: 3, present: 2, absent: 1};
+                const cur = key.className.includes("correct") ? "correct"
+                          : key.className.includes("present") ? "present"
+                          : key.className.includes("absent") ? "absent" : "none";
+                if ((priority[saved.results[r][c]] || 0) > (priority[cur] || 0)) {
+                  key.className = "key" + (key.textContent.length > 1 ? " wide" : "") + " " + saved.results[r][c];
+                }
+              }
+            }
+          }
+        }
+      }
+
+      function handleKey(k) {
+        if (gameOver) return;
+        if (k === "⌫" || k === "BACKSPACE") {
+          if (currentCol > 0) {
+            currentCol--;
+            grid[currentRow][currentCol] = "";
+            tileEls[currentRow][currentCol].textContent = "";
+            tileEls[currentRow][currentCol].className = "tile";
+          }
+        } else if (k === "ENTER") {
+          submitGuess();
+        } else if (/^[A-Z]$/.test(k) && currentCol < COLS) {
+          grid[currentRow][currentCol] = k;
+          tileEls[currentRow][currentCol].textContent = k;
+          tileEls[currentRow][currentCol].className = "tile filled";
+          currentCol++;
+          saveState();
+        }
+      }
+
+      document.addEventListener("keydown", e => {
+        if (e.key === "Backspace") handleKey("BACKSPACE");
+        else if (e.key === "Enter") handleKey("ENTER");
+        else if (/^[a-zA-Z]$/.test(e.key)) handleKey(e.key.toUpperCase());
+      });
+
+      function submitGuess() {
+        if (currentCol < COLS) {
+          showMessage("Not enough letters!");
+          return;
+        }
+        const guess = grid[currentRow].join("");
+        const result = score(guess, WORD);
+        for (let c = 0; c < COLS; c++) {
+          const tile = tileEls[currentRow][c];
+          tile.className = "tile " + result[c];
+          results[currentRow][c] = result[c];
+          // Update keyboard color (only upgrade: correct > present > absent)
+          const key = keyMap[guess[c]];
+          if (key) {
+            const priority = {correct: 3, present: 2, absent: 1};
+            const cur = key.className.includes("correct") ? "correct"
+                      : key.className.includes("present") ? "present"
+                      : key.className.includes("absent") ? "absent" : "none";
+            if ((priority[result[c]] || 0) > (priority[cur] || 0)) {
+              key.className = "key" + (key.textContent.length > 1 ? " wide" : "") + " " + result[c];
+            }
+          }
+        }
+
+        if (guess === WORD) {
+          showMessage("You got it! +$50 awarded!");
+          gameOver = true;
+          localStorage.removeItem(STORAGE_KEY); // clear on completion
+          endGame(true);
+          return;
+        }
+        currentRow++;
+        currentCol = 0;
+        saveState();
+        if (currentRow === ROWS) {
+          showMessage("The word was: " + WORD);
+          gameOver = true;
+          localStorage.removeItem(STORAGE_KEY);
+          endGame(false);
+        }
+      }
+
+      function score(guess, word) {
+        const result = Array(COLS).fill("absent");
+        const wordArr = word.split("");
+        const guessArr = guess.split("");
+        const used = Array(COLS).fill(false);
+        // First pass: correct
+        for (let i = 0; i < COLS; i++) {
+          if (guessArr[i] === wordArr[i]) {
+            result[i] = "correct";
+            used[i] = true;
+            wordArr[i] = null;
+          }
+        }
+        // Second pass: present
+        for (let i = 0; i < COLS; i++) {
+          if (result[i] === "correct") continue;
+          for (let j = 0; j < COLS; j++) {
+            if (!used[j] && guessArr[i] === wordArr[j]) {
+              result[i] = "present";
+              used[j] = true;
+              wordArr[j] = null;
+              break;
+            }
+          }
+        }
+        return result;
+      }
+
+      function showMessage(msg) {
+        document.getElementById("message-box").textContent = msg;
+      }
+
+      function endGame(won) {
+        const form = document.getElementById("result-form");
+        document.getElementById("won-input").value = won ? "true" : "false";
+        setTimeout(() => form.submit(), 1800);
+      }
+
+      let hintIndex = 0;
+
+      async function buyHint() {
+        if (gameOver) return;
+
+        // figure out which positions are already correct
+        const knownIndices = [];
+        for (let r = 0; r < currentRow; r++) {
+          for (let c = 0; c < COLS; c++) {
+            if (results[r][c] === "correct") knownIndices.push(c);
+          }
+        }
+
+        const fd = new FormData();
+        fd.append("hint_index", hintIndex);
+        fd.append("known", knownIndices.join(","));
+
+        const btn = document.getElementById("hint-btn");
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+
+        const res = await fetch("/hint", { method: "POST", body: fd });
+        const data = await res.json();
+
+        btn.disabled = false;
+        btn.style.opacity = "1";
+
+        if (data.error) {
+          const box = document.getElementById("hint-box");
+          box.textContent = "⚠️ " + data.error;
+          box.style.display = "block";
+          return;
+        }
+
+        // update top balance display
+        document.getElementById("balance-display").textContent = data.balance;
+
+        // if it's a position hint, fill that letter into the current row
+        if (data.type === "position") {
+          const col = data.index;
+          grid[currentRow][col] = data.letter;
+          tileEls[currentRow][col].textContent = data.letter;
+          tileEls[currentRow][col].className = "tile filled";
+          tileEls[currentRow][col].style.borderColor = "#F97316";
+          // advance currentCol past the revealed tile if needed
+          if (currentCol <= col) currentCol = col + 1;
+        }
+
+        // show hint text
+        const box = document.getElementById("hint-box");
+        box.textContent = "💡 " + data.text;
+        box.style.display = "block";
+
+        hintIndex++;
+        saveState();
+      }
+    </script>
+    {% endif %}
+  </body>
+</html>

@@ -62,6 +62,28 @@ c.execute(
 db.commit()
 db.close()
 
+# add injury column if it doesn't exist yet
+try:
+    _db = get_db()
+    _db.execute("ALTER TABLE animals ADD COLUMN injury TEXT DEFAULT 'healthy'")
+    _db.commit()
+    _db.close()
+except:
+    pass
+
+INJURIES = {
+    "healthy":     {"label": "Healthy",      "emoji": "💚", "description": "No issues.",                         "food_cost": 1, "urgency": "low"},
+    "malnourished":{"label": "Malnourished", "emoji": "🍂", "description": "Needs 3× food to recover.",          "food_cost": 3, "urgency": "high"},
+    "old_age":     {"label": "Old Age",      "emoji": "🧓", "description": "Frail — heals slowly.",              "food_cost": 2, "urgency": "medium"},
+    "parasites":   {"label": "Parasites",    "emoji": "🪱", "description": "Losing health fast. Act quickly!",   "food_cost": 2, "urgency": "high"},
+    "broken_leg":  {"label": "Broken Leg",   "emoji": "🦴", "description": "Can't move well. Needs extra food.", "food_cost": 2, "urgency": "medium"},
+}
+
+URGENCY_COLORS = {
+    "low":    "#16a34a",   # green
+    "medium": "#ea580c",   # orange
+    "high":   "#dc2626",   # red
+}
 
 # HTML PAGES
 # LANDING PAGE
@@ -263,6 +285,11 @@ def wild():
             path = f"{basepath}/{image}"
 
 
+            injury = random.choices(
+                list(INJURIES.keys()),
+                weights=[40, 15, 15, 15, 15]
+            )[0]
+
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
             c.execute('''UPDATE users
@@ -271,9 +298,9 @@ def wild():
             ''', (session["user_id"],))
             print(fetch('users', 'user_id = ?', 'animals', (session["user_id"],))[0][0])
             c.execute('''
-            INSERT INTO animals (user_id, species, health, name, path, released)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ''', (session["user_id"], request.form.get("species"), r, request.form.get("name"), path, 0,))
+            INSERT INTO animals (user_id, species, health, name, path, released, injury)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (session["user_id"], request.form.get("species"), r, request.form.get("name"), path, 0, injury,))
 
             db.commit()
             db.close()
@@ -309,16 +336,13 @@ def enclosure(a_rowid):
         if request.form.get("action") == "feeding":
             db = sqlite3.connect(DB_FILE)
             c = db.cursor()
-            c.execute('''UPDATE animals
-            SET health = health + 1
-            WHERE animal_id = ?
-            ''', (int(request.form.get("id")),))
-
-            c.execute('''UPDATE users
-            SET food = food - 1
-            WHERE user_id = ?
-            ''', (session["user_id"],))
-
+            animal_id = int(request.form.get("id"))
+            injury_key = db.execute("SELECT injury FROM animals WHERE animal_id = ?", (animal_id,)).fetchone()[0] or "healthy"
+            food_cost = INJURIES.get(injury_key, INJURIES["healthy"])["food_cost"]
+            curr_food = db.execute("SELECT food FROM users WHERE user_id = ?", (session["user_id"],)).fetchone()[0]
+            if curr_food >= food_cost:
+                c.execute("UPDATE animals SET health = MIN(10, health + 1) WHERE animal_id = ?", (animal_id,))
+                c.execute("UPDATE users SET food = food - ? WHERE user_id = ?", (food_cost, session["user_id"]))
             db.commit()
             db.close()
 
@@ -343,24 +367,27 @@ def enclosure(a_rowid):
     #info for food percentages--animal starts with random health below 100
     ev = fetch('animals', 'animal_id = ?', '*', (a_rowid,))
 
-    print(a_rowid)
-    print('AAAAAAAAAAAAAAAAAAA')
-    print(ev)
-
-
-
+    if not ev:
+        return redirect("/")
+    if ev[0][6] == 1:
+        return redirect("/")
 
     rad = str(ev[0][3] * 10) + "%"
     strR = "width:" + rad
     ra = ev[0][3] * 10
     n = ev[0][4]
 
+    injury_key = ev[0][7] if len(ev[0]) > 7 else "healthy"
+    injury_info = INJURIES.get(injury_key or "healthy", INJURIES["healthy"])
+    food_cost = injury_info["food_cost"]
+    urgency_color = URGENCY_COLORS[injury_info["urgency"]]
 
     #check if food is available
     currF = fetch('users', 'user_id = ?', 'food', (session["user_id"],))[0][0]
-    canFeed = currF > 0
+    canFeed = currF >= food_cost
 
-    return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid, canFeed = canFeed)
+    return render_template("enclosure.html", p = ev[0][5], r = rad, strR = strR, rInt = ra, n = n, a = a_rowid,
+                           canFeed = canFeed, injury = injury_info, urgency_color = urgency_color, food_cost = food_cost)
 
 
 
@@ -434,24 +461,19 @@ def get_data(url):
         return None
 
 def tableString(r):
-    ans = fetch('animals', 'user_id = ? AND released == ?', 'name', (session["user_id"], r,))
-    names = []
-    for i in range(len(ans)):
-        names += ans[i]
-        print(names)
+    db = get_db()
+    animals_rows = db.execute(
+        "SELECT animal_id, name, path, injury FROM animals WHERE user_id = ? AND released = ?",
+        (session["user_id"], r)
+    ).fetchall()
+    db.close()
 
-    ans2 = fetch('animals', 'user_id = ? AND released == ?', 'path', (session["user_id"], r,))
-    paths = []
-    for i in range(len(ans2)):
-        paths += ans2[i]
-
-    ans3 = fetch('animals', 'user_id = ? AND released == ?', 'animal_id', (session["user_id"], r,))
-    ids = []
-    for i in range(len(ans3)):
-        ids += ans3[i]
+    ids     = [a[0] for a in animals_rows]
+    names   = [a[1] for a in animals_rows]
+    paths   = [a[2] for a in animals_rows]
+    injuries = [INJURIES.get(a[3] or "healthy", INJURIES["healthy"]) for a in animals_rows]
 
     tableString = ""
-
 
     for i in range(fetch('users', 'user_id = ?', 'enclosures', (session["user_id"],))[0][0]):
         if (i%3==0):
@@ -460,14 +482,16 @@ def tableString(r):
         tableString+= f"""
         <td class = "p-4 border border-gray-300">"""
         if i < len(names):
+            inj = injuries[i]
+            badge_color = URGENCY_COLORS[inj["urgency"]]
             tableString+=f"""
-            <p class="uppercase text-xs">{names[i]}'s Enclosure</p>
+            <p class="uppercase text-xs font-bold">{names[i]}'s Enclosure</p>
+            <p class="text-xs font-semibold" style="color:{badge_color};">{inj['emoji']} {inj['label']}</p>
             <form action="/enclosure/{ids[i]}" method="get">
             <button>
             <div class="relative">
             <img src={paths[i]} alt="animal" class=" top-0 z-0 absolute animalsh">
             """
-
         else:
             tableString+="""
             <p class="uppercase text-xs">Empty Enclosure</p>

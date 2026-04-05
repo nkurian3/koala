@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TETRIS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
+    <style>
+      body { font-family: 'Poppins', sans-serif; }
+      canvas { display: block; border: 3px solid #374151; border-radius: 8px; background: #111; }
+    </style>
+  </head>
+  <body class="min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('{{backdrop}}');">
+    <nav>
+      <div class="bg-gray-800 flex items-center justify-between h-20 p-4">
+        <a class="flex items-center" href="/"><img src="/static/favicon.ico" alt="icon" class="h-12 w-12 rounded"></a>
+        <div class="p-5 flex flex-row justify-end space-x-4">
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/">Home</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/profile">Profile</a>
+          <a class="font-semibold rounded-lg py-3 px-5 shadow-md shadow-white bg-white text-gray-800" href="/rewards">Rewards</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/wild">Wild</a>
+          <a class="font-semibold bg-transparent rounded-lg text-white hover:bg-white hover:text-gray-800 py-3 px-5 shadow-md shadow-white" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <h1 class="text-3xl text-center uppercase my-3 font-bold text-white p-3" style="background-color: {{theme_color}};">🟦 Tetris — $10 per line cleared!</h1>
+
+    <div class="flex justify-center gap-8 mt-4 pb-8 items-start flex-wrap">
+      <canvas id="tetris" width="300" height="600"></canvas>
+
+      <div class="flex flex-col gap-4" style="min-width: 180px;">
+        <div class="bg-white/90 rounded-2xl shadow p-4">
+          <div class="text-gray-500 text-sm font-semibold uppercase">Lines</div>
+          <div id="lines-display" class="text-3xl font-bold text-gray-800">0</div>
+        </div>
+        <div class="bg-white/90 rounded-2xl shadow p-4">
+          <div class="text-gray-500 text-sm font-semibold uppercase">Coins Earned</div>
+          <div id="coins-display" class="text-3xl font-bold" style="color: {{theme_color}};">$0</div>
+        </div>
+        <div class="bg-white/90 rounded-2xl shadow p-4 text-sm text-gray-600">
+          <div class="font-bold mb-1">Controls</div>
+          <div>← → &nbsp; Move</div>
+          <div>↑ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rotate</div>
+          <div>↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Speed up</div>
+          <div>Space &nbsp; Drop</div>
+        </div>
+        <div id="game-over-box" class="bg-white/90 rounded-2xl shadow p-4 text-center hidden">
+          <div class="font-bold text-gray-800 text-lg mb-1">Game Over!</div>
+          <div id="final-coins" class="font-semibold mb-2" style="color: {{theme_color}};"></div>
+          <div class="text-sm text-gray-500">Saving your coins...</div>
+        </div>
+        <a href="/rewards" class="font-semibold text-white rounded-xl px-6 py-3 text-center shadow" style="background-color: {{theme_color}};">← Back to Rewards</a>
+      </div>
+    </div>
+
+    <script>
+      const THEME = "{{theme_color}}";
+      const COLS = 10, ROWS = 20, BLOCK = 30;
+      const canvas = document.getElementById("tetris");
+      const ctx = canvas.getContext("2d");
+
+      const COLORS = ["#EF4444","#F97316","#EAB308","#22C55E","#3B82F6","#8B5CF6","#EC4899"];
+      const PIECES = [
+        [[1,1,1,1]],                          // I
+        [[1,1],[1,1]],                         // O
+        [[0,1,0],[1,1,1]],                     // T
+        [[1,0,0],[1,1,1]],                     // L
+        [[0,0,1],[1,1,1]],                     // J
+        [[0,1,1],[1,1,0]],                     // S
+        [[1,1,0],[0,1,1]]                      // Z
+      ];
+
+      let board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+      let current, currentX, currentY, currentColor;
+      let linesCleared = 0;
+      let gameRunning = true;
+      let dropInterval = 500;
+      let lastDrop = 0;
+
+      function newPiece() {
+        const idx = Math.floor(Math.random() * PIECES.length);
+        current = PIECES[idx].map(r => [...r]);
+        currentColor = COLORS[idx];
+        currentX = Math.floor(COLS / 2) - Math.floor(current[0].length / 2);
+        currentY = 0;
+        if (!canPlace(current, currentX, currentY)) {
+          gameOver();
+        }
+      }
+
+      function canPlace(piece, px, py) {
+        for (let r = 0; r < piece.length; r++) {
+          for (let c = 0; c < piece[r].length; c++) {
+            if (!piece[r][c]) continue;
+            const nx = px + c, ny = py + r;
+            if (nx < 0 || nx >= COLS || ny >= ROWS) return false;
+            if (ny >= 0 && board[ny][nx]) return false;
+          }
+        }
+        return true;
+      }
+
+      function place() {
+        for (let r = 0; r < current.length; r++) {
+          for (let c = 0; c < current[r].length; c++) {
+            if (current[r][c]) {
+              board[currentY + r][currentX + c] = currentColor;
+            }
+          }
+        }
+        clearLines();
+        newPiece();
+      }
+
+      function clearLines() {
+        let cleared = 0;
+        for (let r = ROWS - 1; r >= 0; r--) {
+          if (board[r].every(cell => cell !== 0)) {
+            board.splice(r, 1);
+            board.unshift(Array(COLS).fill(0));
+            cleared++;
+            r++;
+          }
+        }
+        if (cleared > 0) {
+          linesCleared += cleared;
+          document.getElementById("lines-display").textContent = linesCleared;
+          document.getElementById("coins-display").textContent = "$" + (linesCleared * 10);
+        }
+      }
+
+      function rotate(piece) {
+        const rows = piece.length, cols = piece[0].length;
+        const rotated = Array.from({length: cols}, () => Array(rows).fill(0));
+        for (let r = 0; r < rows; r++)
+          for (let c = 0; c < cols; c++)
+            rotated[c][rows - 1 - r] = piece[r][c];
+        return rotated;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Grid lines
+        ctx.strokeStyle = "#1f2937";
+        ctx.lineWidth = 0.5;
+        for (let r = 0; r <= ROWS; r++) { ctx.beginPath(); ctx.moveTo(0, r*BLOCK); ctx.lineTo(COLS*BLOCK, r*BLOCK); ctx.stroke(); }
+        for (let c = 0; c <= COLS; c++) { ctx.beginPath(); ctx.moveTo(c*BLOCK, 0); ctx.lineTo(c*BLOCK, ROWS*BLOCK); ctx.stroke(); }
+        // Board
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            if (board[r][c]) {
+              drawBlock(c, r, board[r][c]);
+            }
+          }
+        }
+        // Ghost piece
+        if (current) {
+          let ghostY = currentY;
+          while (canPlace(current, currentX, ghostY + 1)) ghostY++;
+          for (let r = 0; r < current.length; r++)
+            for (let c = 0; c < current[r].length; c++)
+              if (current[r][c]) {
+                ctx.fillStyle = "rgba(255,255,255,0.1)";
+                ctx.fillRect((currentX+c)*BLOCK+1, (ghostY+r)*BLOCK+1, BLOCK-2, BLOCK-2);
+              }
+        }
+        // Current piece
+        if (current) {
+          for (let r = 0; r < current.length; r++)
+            for (let c = 0; c < current[r].length; c++)
+              if (current[r][c]) drawBlock(currentX+c, currentY+r, currentColor);
+        }
+      }
+
+      function drawBlock(x, y, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x*BLOCK+1, y*BLOCK+1, BLOCK-2, BLOCK-2);
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
+        ctx.fillRect(x*BLOCK+1, y*BLOCK+1, BLOCK-2, 4);
+      }
+
+      function gameLoop(ts) {
+        if (!gameRunning) return;
+        if (ts - lastDrop > dropInterval) {
+          lastDrop = ts;
+          if (canPlace(current, currentX, currentY + 1)) {
+            currentY++;
+          } else {
+            place();
+          }
+        }
+        draw();
+        requestAnimationFrame(gameLoop);
+      }
+
+      function gameOver() {
+        gameRunning = false;
+        draw();
+        const coins = linesCleared * 10;
+        document.getElementById("game-over-box").classList.remove("hidden");
+        document.getElementById("final-coins").textContent = "You earned $" + coins + "!";
+        if (coins > 0) {
+          const fd = new FormData();
+          fd.append("amount", coins);
+          fetch("/earn", { method: "POST", body: fd })
+            .finally(() => { setTimeout(() => { window.location.href = "/rewards"; }, 2000); });
+        } else {
+          setTimeout(() => { window.location.href = "/rewards"; }, 2000);
+        }
+      }
+
+      document.addEventListener("keydown", e => {
+        if (!gameRunning || !current) return;
+        if (e.key === "ArrowLeft") {
+          if (canPlace(current, currentX - 1, currentY)) currentX--;
+        } else if (e.key === "ArrowRight") {
+          if (canPlace(current, currentX + 1, currentY)) currentX++;
+        } else if (e.key === "ArrowDown") {
+          if (canPlace(current, currentX, currentY + 1)) currentY++;
+          else place();
+        } else if (e.key === "ArrowUp") {
+          const rot = rotate(current);
+          if (canPlace(rot, currentX, currentY)) current = rot;
+        } else if (e.key === " ") {
+          e.preventDefault();
+          while (canPlace(current, currentX, currentY + 1)) currentY++;
+          place();
+        }
+      });
+
+      newPiece();
+      requestAnimationFrame(gameLoop);
+    </script>
+  </body>
+</html>
