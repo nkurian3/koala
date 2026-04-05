@@ -49,14 +49,14 @@ for (let i = 0; i < buttons.length; i++) {
 
         n.textContent = this.dataset.name;
         s.textContent = this.dataset.species;
-        h.textContent = 'Needs rescue';
+        h.textContent = this.dataset.health === 'sick' ? 'Sick' : 'Healthy';
 
         ina.value = this.dataset.name;
         is.value = this.dataset.species;
         ih.value = this.dataset.health;
 
         if (rescue) {
-            rescue.style.display = "block";
+            rescue.style.display = this.dataset.health === "sick" ? "block" : "none";
         }
     }
 }
