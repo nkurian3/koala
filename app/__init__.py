@@ -6,7 +6,7 @@
 
 import sqlite3
 import random
-from flask import Flask, url_for, render_template
+from flask import Flask, url_for, render_template, send_from_directory
 from flask import session, request, redirect
 import os
 #import requests
@@ -22,6 +22,10 @@ app.secret_key = "afsdfhbksadbfh"
 url_err = "url error"
 # SQLite
 DB_FILE = "data.db"
+
+@app.route("/images/<path:filename>")
+def serve_image(filename):
+    return send_from_directory(os.path.join(app.root_path, "images"), filename)
 
 def get_db():
     conn = sqlite3.connect(DB_FILE)
@@ -111,25 +115,19 @@ except:
     pass
 
 THEMES = [
-    # Cities
-    {"name": "Lake Michigan",      "color": "#3B82F6", "backdrop": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&auto=format&fit=crop"},
-    {"name": "Paris Balcony",      "color": "#F43F5E", "backdrop": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1400&auto=format&fit=crop"},
-    {"name": "New York Streets",   "color": "#6366F1", "backdrop": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1400&auto=format&fit=crop"},
-    {"name": "Tokyo Night",        "color": "#EC4899", "backdrop": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1400&auto=format&fit=crop"},
-    {"name": "London Fog",         "color": "#64748B", "backdrop": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1400&auto=format&fit=crop"},
-    {"name": "Santorini",          "color": "#0EA5E9", "backdrop": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1400&auto=format&fit=crop"},
-    {"name": "Kyoto Temple",       "color": "#F97316", "backdrop": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1400&auto=format&fit=crop"},
-    {"name": "Amalfi Coast",       "color": "#10B981", "backdrop": "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=1400&auto=format&fit=crop"},
-    # Nature
-    {"name": "Sunny Meadow",       "color": "#00A86B", "backdrop": "/static/backdrops/wild_backdrop.png"},
-    {"name": "Snowy Mountains",    "color": "#64748B", "backdrop": "https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=1400&auto=format&fit=crop"},
-    {"name": "Golden Hour",        "color": "#EAB308", "backdrop": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&auto=format&fit=crop"},
-    {"name": "Cherry Blossom",     "color": "#F472B6", "backdrop": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1400&auto=format&fit=crop"},
-    {"name": "Lavender Hills",     "color": "#8B5CF6", "backdrop": "https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=1400&auto=format&fit=crop"},
-    {"name": "Tropical Beach",     "color": "#06B6D4", "backdrop": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&auto=format&fit=crop"},
-    {"name": "Desert Dunes",       "color": "#D97706", "backdrop": "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1400&auto=format&fit=crop"},
-    {"name": "Northern Lights",    "color": "#34D399", "backdrop": "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1400&auto=format&fit=crop"},
-    {"name": "Misty Rainforest",   "color": "#065F46", "backdrop": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1400&auto=format&fit=crop"},
+    {"name": "Big Ben, London",            "color": "#F97316", "backdrop": "/images/BigBenLondon.JPG"},
+    {"name": "South Street Pier, NY",      "color": "#EC4899", "backdrop": "/images/SouthStreetPierNY.JPG"},
+    {"name": "Chinatown, NY",              "color": "#EF4444", "backdrop": "/images/ChinatownNY.jpg"},
+    {"name": "Flushing, NY",               "color": "#F59E0B", "backdrop": "/images/FlushingNY.jpg"},
+    {"name": "Gamcheon Culture Village, Busan", "color": "#8B5CF6", "backdrop": "/images/GamcheonCultureVillage.jpg"},
+    {"name": "Lake Kamogawa, Kyoto",            "color": "#06B6D4", "backdrop": "/images/LakeKamogawa.jpg"},
+    {"name": "Late Night Kyoto",           "color": "#6366F1", "backdrop": "/images/LateNightStreetsKyoto.jpg"},
+    {"name": "Mount Fuji, Japan",               "color": "#64748B", "backdrop": "/images/MountFujiPeak.jpg"},
+    {"name": "Nan Lian Garden, HK",        "color": "#10B981", "backdrop": "/images/NanLianGardenHK.jpg"},
+    {"name": "Ninenzaka, Kyoto",           "color": "#F97316", "backdrop": "/images/Ninenzaka.jpg"},
+    {"name": "Sagrada Familia, Barcelona", "color": "#EAB308", "backdrop": "/images/SagradaFamiliaBarcelona.jpg"},
+    {"name": "Shirogane Blue Pond, Hokkaido", "color": "#3B82F6", "backdrop": "/images/ShiroganeBluePond.jpg"},
+    {"name": "Suzhou, China",              "color": "#00A86B", "backdrop": "/images/SuzhouChina.jpg"},
 ]
 
 def get_user_theme():
@@ -603,10 +601,20 @@ def trivia():
         trivia = getTrivia()
         session["trivia"] = trivia
         session["correct_answer"] = trivia["correct"]
+    animals = db.execute(
+        "SELECT path FROM animals WHERE user_id = ? AND released = 0", (session["user_id"],)
+    ).fetchall()
     db.close()
+    animal_imgs = [row[0] for row in animals]
+    if len(animal_imgs) >= 2:
+        chosen = random.sample(animal_imgs, 2)
+    elif len(animal_imgs) == 1:
+        chosen = [animal_imgs[0], animal_imgs[0]]
+    else:
+        chosen = ["/static/animal_animations/bunny_hover.gif", "/static/animal_animations/squirrel_hover.gif"]
     theme = get_user_theme()
     return render_template("trivia.html", question=trivia["question"], answers=trivia["answers"],
-                           response=response, money=money, **theme)
+                           response=response, money=money, animal1=chosen[0], animal2=chosen[1], **theme)
 
 
 @app.route("/wordle", methods=["GET", "POST"])
